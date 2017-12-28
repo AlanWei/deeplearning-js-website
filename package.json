@@ -52,9 +52,10 @@
     "dependencies": {
         "axios": "^0.17.1",
         "classnames": "^2.2.5",
-        "deeplearning-js": "^0.2.0",
+        "deeplearning-js": "^0.2.1",
         "history": "^4.6.3",
         "lodash": "^4.17.4",
+        "mnist": "^1.1.0",
         "prop-types": "^15.6.0",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",

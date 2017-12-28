@@ -96,7 +96,7 @@ acorn@^4.0.3, acorn@^4.0.4:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
-acorn@^5.0.0, acorn@^5.2.1:
+acorn@^5.0.0, acorn@^5.1.1, acorn@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.1.tgz#317ac7821826c22c702d66189ab8359675f135d7"
 
@@ -1866,13 +1866,15 @@ deep-is@~0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
 
-deeplearning-js@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/deeplearning-js/-/deeplearning-js-0.2.0.tgz#54b0cbe4bd0aef2891aa7f6e9ccac69a118ace09"
+deeplearning-js@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/deeplearning-js/-/deeplearning-js-0.2.1.tgz#f068f92ca4219d01cc9f0db4b69d59f8742a4141"
   dependencies:
     fast-csv "^2.4.1"
     gaussian "^1.1.0"
+    gpu.js "^1.0.0"
     lodash "^4.17.4"
+    mnist "^1.1.0"
 
 default-require-extensions@^1.0.0:
   version "1.0.0"
@@ -2945,6 +2947,12 @@ globule@^1.0.0:
     glob "~7.1.1"
     lodash "~4.17.4"
     minimatch "~3.0.2"
+
+gpu.js@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/gpu.js/-/gpu.js-1.0.0.tgz#97c268dfb37048d49670aa71862382bd2a5c86dd"
+  dependencies:
+    acorn "^5.1.1"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
@@ -4362,6 +4370,10 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
+
+mnist@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mnist/-/mnist-1.1.0.tgz#b83efc6af88d8db53b196665acdb50cf524bd2ba"
 
 ms@2.0.0:
   version "2.0.0"

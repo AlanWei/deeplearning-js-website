@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import dl from '../../dl';
 import action from './action';
 import logo from '../../assets/logo.svg';
 import './style.scss';
@@ -16,6 +17,17 @@ class Home extends Component {
     this.props.getMessage();
   }
 
+  runDL = () => {
+    dl(
+      10,
+      10,
+      0.005,
+      1000,
+      100,
+      0.000003,
+    );
+  }
+
   render() {
     return (
       <div className="home">
@@ -26,11 +38,7 @@ class Home extends Component {
         <p className="App-intro">
           To get started, edit <code>src/views/home/index.js</code> and save to reload.
         </p>
-        <Link to="/user">
-          <p className="App-intro">
-            {this.props.message}
-          </p>
-        </Link>
+        <button onClick={this.runDL}>DL</button>
       </div>
     );
   }
