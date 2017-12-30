@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import dl from '../../dl';
+import softmax from '../../dl/softmax';
 import action from './action';
 import logo from '../../assets/logo.svg';
 import './style.scss';
 
 const propTypes = {
-  message: PropTypes.string.isRequired,
   getMessage: PropTypes.func.isRequired,
 };
 
@@ -18,7 +17,7 @@ class Home extends Component {
   }
 
   runDL = () => {
-    dl(
+    softmax(
       10,
       10,
       0.005,
