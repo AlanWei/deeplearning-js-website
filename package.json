@@ -52,7 +52,7 @@
     "dependencies": {
         "axios": "^0.17.1",
         "classnames": "^2.2.5",
-        "deeplearning-js": "^0.2.1",
+        "deeplearning-js": "^0.2.6",
         "history": "^4.6.3",
         "lodash": "^4.17.4",
         "mnist": "^1.1.0",
@@ -63,6 +63,7 @@
         "react-redux": "^5.0.5",
         "react-router-dom": "^4.1.2",
         "react-router-redux": "^5.0.0-alpha.8",
+        "recharts": "^1.0.0-beta.7",
         "redux": "^3.7.2",
         "redux-thunk": "^2.2.0",
         "reselect": "^3.0.1"
