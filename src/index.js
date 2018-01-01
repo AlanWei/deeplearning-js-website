@@ -3,6 +3,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import isNil from 'lodash/isNil';
 import app from 'app/index';
 
+import 'antd/dist/antd.css';
 import './styles/index.scss';
 
 let client;

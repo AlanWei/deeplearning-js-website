@@ -1,34 +1,32 @@
 @import '../../styles/helpers';
 
 .home {
-  text-align: center;
-
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-    height: 80px;
-  }
-  
-  .App-header {
-    background-color: #222;
-    height: 150px;
-    padding: 20px;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $ui-primary;
+    height: 4em;
+    padding: 0 3em;
     color: $ui-white;
+    .appName {
+      font-size: 1.25em;
+      color: $ui-white;
+    }
+    .menu {
+      background-color: $ui-primary;
+      color: $ui-white;
+      border-bottom: 2px solid $ui-primary;
+      .ant-menu-item {
+        border-bottom: 2px solid $ui-primary;
+      }
+      .ant-menu-item-active {
+        color: $ui-white;
+        border-bottom: 2px solid $ui-white;
+      }
+      .ant-menu-item-selected {
+        color: $ui-white;
+      }
+    }
   }
-  
-  .App-title {
-    font-size: 1.5em;
-  }
-  
-  .App-intro {
-    font-size: large;
-  }
-
-  .App-framework {
-    margin: 0.5em 0;
-  }
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }

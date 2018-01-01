@@ -9,7 +9,7 @@ const path = require('path');
 const ENV = process.env.NODE_ENV || 'development';
 
 const SOURCE_DIR = path.resolve(__dirname, 'src');
-const OUTPUT_DIR = path.resolve(__dirname, 'build');
+const OUTPUT_DIR = path.resolve(__dirname, 'docs');
 
 module.exports = {
   context: SOURCE_DIR,
@@ -44,9 +44,6 @@ module.exports = {
       },
     }, {
       test: /\.(scss|css)$/,
-      include: [
-        SOURCE_DIR,
-      ],
       use: ExtractTextPlugin.extract({
         fallback: {
           loader: 'style-loader',
