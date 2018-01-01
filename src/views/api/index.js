@@ -7,11 +7,11 @@ import './index.scss';
 const propTypes = {
 };
 
-class Home extends Component {
+class API extends Component {
   render() {
     return (
-      <div className="home">
-        <Header current="home" />
+      <div className="api">
+        <Header current="api" />
       </div>
     );
   }
@@ -23,5 +23,5 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = {
 };
 
-Home.propTypes = propTypes;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+API.propTypes = propTypes;
+export default connect(mapStateToProps, mapDispatchToProps)(API);

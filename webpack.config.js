@@ -9,7 +9,7 @@ const path = require('path');
 const ENV = process.env.NODE_ENV || 'development';
 
 const SOURCE_DIR = path.resolve(__dirname, 'src');
-const OUTPUT_DIR = path.resolve(__dirname, 'docs');
+const OUTPUT_DIR = path.resolve(__dirname, 'build');
 
 module.exports = {
   context: SOURCE_DIR,
