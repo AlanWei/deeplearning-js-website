@@ -7,7 +7,7 @@ import {
 } from 'deeplearning-js';
 import iris from './data/iris';
 
-function formatDataSet(dataset) {
+function formatDataSet(dataset, target) {
   const datasetSize = dataset.length;
   let inputValues = [];
   let outputValues = [];
@@ -16,7 +16,7 @@ function formatDataSet(dataset) {
     const input = omit(example, 'species');
     const output = pick(example, 'species');
     inputValues = inputValues.concat(values(input));
-    outputValues = outputValues.concat(output.species === 'setosa' ? 1 : 0);
+    outputValues = outputValues.concat(output.species === target ? 1 : 0);
   });
 
   return {
@@ -56,18 +56,19 @@ function predict(
 }
 
 export default function logistic(
+  target,
   learningRate,
   numOfIterations,
-  baseIterationToShowCost,
-  learningRateDecayRate,
+  isNormalized,
+  hiddenLayerSize,
   onTrainingend,
 ) {
-  const trainSet = formatDataSet(iris);
+  const trainSet = formatDataSet(iris, target);
 
   const initialParameters = initializeParameters([{
     size: trainSet.input.shape[0],
   }, {
-    size: 1,
+    size: hiddenLayerSize,
     activationFunc: 'relu',
   }, {
     size: trainSet.output.shape[0],
@@ -81,8 +82,7 @@ export default function logistic(
     'cross-entropy',
     learningRate,
     numOfIterations,
-    baseIterationToShowCost,
-    learningRateDecayRate,
+    1,
   ).then((ro) => {
     const { parameters, costs } = ro;
     predict(trainSet.input, trainSet.output, parameters, 'training');

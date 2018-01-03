@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
@@ -10,7 +11,9 @@ import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
 import { LEARNING_RATES, EPOCHES, SPECIES } from './const';
+import { formatCostsToChartData } from './formatter';
 import './index.scss';
+import logistic from '../../dl/logistic';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -20,13 +23,21 @@ const DIMS = 4;
 class Demos extends Component {
   state = {
     targetSpecies: 'setosa',
-    learningRate: 0.01,
-    epoch: 1000,
+    learningRate: 0.003,
+    epoch: 500,
+    costFunc: 'cross-entropy',
     isNormalized: false,
     hiddenLayerSize: 10,
     hiddenLayerAct: 'relu',
     outputLayerSize: 1,
     outputLayerAct: 'sigmoid',
+    costs: [],
+  }
+
+  onTrainEnd = (parameters, costs) => {
+    this.setState({
+      costs: formatCostsToChartData(costs),
+    });
   }
 
   handleTargetSpeciesSelect = (value) => {
@@ -57,6 +68,17 @@ class Demos extends Component {
     this.setState({
       hiddenLayerSize: size,
     });
+  }
+
+  handleTrain = () => {
+    logistic(
+      this.state.targetSpecies,
+      this.state.learningRate,
+      this.state.epoch,
+      this.state.isNormalized,
+      this.state.hiddenLayerSize,
+      this.onTrainEnd,
+    );
   }
 
   renderIrisImages = () => (
@@ -149,6 +171,8 @@ class Demos extends Component {
           <Option value={epoch} key={epoch}>{epoch}</Option>
         ))}
       </Select>
+      <span className="parameterLabel">Cost function:</span>
+      <Select className="parameterSelect" defaultValue={this.state.costFunc} disabled />
     </div>
   )
 
@@ -183,6 +207,22 @@ class Demos extends Component {
     </div>
   )
 
+  renderCostGraph = () => {
+    return (
+      <LineChart
+        height={400}
+        data={this.state.costs}
+      >
+        <XAxis dataKey="name" />
+        <YAxis />
+        <CartesianGrid strokeDasharray="3 3" />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="cost" stroke="#82ca9d" />
+      </LineChart>
+    );
+  }
+
   renderIris = datasetSize => (
     <Card title="Logistic regression - Iris">
       {this.renderIrisImages()}
@@ -197,8 +237,9 @@ class Demos extends Component {
       <h2 className="block">Model</h2>
       {this.renderModel(datasetSize)}
       <h2 className="block">Training</h2>
-      <Button type="primary" size="large">TRAIN</Button>
+      <Button type="primary" size="large" onClick={this.handleTrain}>TRAIN</Button>
       <h2 className="block">Cost</h2>
+      {this.renderCostGraph()}
     </Card>
   )
 
