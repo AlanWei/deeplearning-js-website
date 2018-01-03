@@ -1,4 +1,4 @@
-@import '../../styles/helpers';
+@import "../../styles/helpers";
 
 .demos {
   .block {
@@ -24,5 +24,21 @@
   .parameterSelect {
     width: 100px;
     margin-right: 16px;
+  }
+  .model {
+    display: flex;
+    .modelLayer {
+      flex: 1;
+      margin-right: 24px;
+      &:last-child {
+        margin-right: 0;
+      }
+      .layerBlock {
+        margin-bottom: 6px;
+      }
+      .divider {
+        height: 12px;
+      }
+    }
   }
 }

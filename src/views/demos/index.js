@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Card, Table, Select } from 'antd';
+import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
@@ -10,19 +9,30 @@ import iris from '../../dl/data/iris';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
-import { LEARNING_RATES, EPOCHES } from './const';
+import { LEARNING_RATES, EPOCHES, SPECIES } from './const';
 import './index.scss';
 
 const { Meta } = Card;
 const { Option } = Select;
 
-const propTypes = {
-};
+const DIMS = 4;
 
 class Demos extends Component {
   state = {
+    targetSpecies: 'setosa',
     learningRate: 0.01,
     epoch: 1000,
+    isNormalized: false,
+    hiddenLayerSize: 10,
+    hiddenLayerAct: 'relu',
+    outputLayerSize: 1,
+    outputLayerAct: 'sigmoid',
+  }
+
+  handleTargetSpeciesSelect = (value) => {
+    this.setState({
+      targetSpecies: value,
+    });
   }
 
   handleLearningRateSelect = (value) => {
@@ -34,6 +44,18 @@ class Demos extends Component {
   handleEpochSelect = (value) => {
     this.setState({
       epoch: value,
+    });
+  }
+
+  handlePreprocessSwitch = (checked) => {
+    this.setState({
+      isNormalized: checked,
+    });
+  }
+
+  handleHiddenLayerSize = (size) => {
+    this.setState({
+      hiddenLayerSize: size,
     });
   }
 
@@ -109,13 +131,19 @@ class Demos extends Component {
 
   renderTrainParameters = () => (
     <div>
-      <span className="parameterLabel">Learning rate</span>
+      <span className="parameterLabel">Target Species:</span>
+      <Select className="parameterSelect" defaultValue={this.state.targetSpecies} onChange={this.handleTargetSpeciesSelect}>
+        {map(SPECIES, species => (
+          <Option value={species} key={species}>{species}</Option>
+        ))}
+      </Select>
+      <span className="parameterLabel">Learning rate:</span>
       <Select className="parameterSelect" defaultValue={this.state.learningRate} onChange={this.handleLearningRateSelect}>
         {map(LEARNING_RATES, learningRate => (
           <Option value={learningRate} key={learningRate}>{learningRate}</Option>
         ))}
       </Select>
-      <span className="parameterLabel">Epoch</span>
+      <span className="parameterLabel">Epoch:</span>
       <Select className="parameterSelect" defaultValue={this.state.epoch} onChange={this.handleEpochSelect}>
         {map(EPOCHES, epoch => (
           <Option value={epoch} key={epoch}>{epoch}</Option>
@@ -124,7 +152,38 @@ class Demos extends Component {
     </div>
   )
 
-  renderIris = () => (
+  renderModel = datasetSize => (
+    <div className="model">
+      <Card className="modelLayer" title="Input Layer" extra={<span>[{DIMS}, {datasetSize}]</span>}>
+        <div className="layerBlock">Data set:</div>
+        <a href="../../dl/data/iris.json" target="_blank">Iris</a>
+      </Card>
+      <Card className="modelLayer" title="Data Preprocess" extra={<span>[{DIMS}, {datasetSize}]</span>}>
+        <div className="layerBlock">Data Normalization:</div>
+        <Switch checked={this.state.isNormalized} onChange={this.handlePreprocessSwitch} />
+      </Card>
+      <Card className="modelLayer" title="Hidden Layer" extra={<span>[{this.state.hiddenLayerSize}, {DIMS}]</span>}>
+        <div className="layerBlock">Activation function:</div>
+        <Select className="parameterSelect" defaultValue={this.state.hiddenLayerAct} disabled />
+        <div className="divider" />
+        <div className="layerBlock">Neurons:</div>
+        <InputNumber min={1} max={100} step={10} defaultValue={this.state.hiddenLayerSize} onChange={this.handleHiddenLayerSize} />
+      </Card>
+      <Card className="modelLayer" title="Output Layer" extra={<span>[{this.state.outputLayerSize}, {this.state.hiddenLayerSize}]</span>}>
+        <div className="layerBlock">Activation function:</div>
+        <Select className="parameterSelect" defaultValue={this.state.outputLayerAct} disabled />
+        <div className="divider" />
+        <div className="layerBlock">Neurons:</div>
+        <InputNumber defaultValue={this.state.outputLayerSize} disabled />
+      </Card>
+      <Card className="modelLayer" title="Output" extra={<span>[{this.state.outputLayerSize}, {datasetSize}]</span>}>
+        <div className="layerBlock">Description:</div>
+        <div className="layerBlock">A [{this.state.outputLayerSize}, {datasetSize}] matrix with 0 or 1 represents each of {datasetSize} examples is the target species or not</div>
+      </Card>
+    </div>
+  )
+
+  renderIris = datasetSize => (
     <Card title="Logistic regression - Iris">
       {this.renderIrisImages()}
       <h2 className="block">Description</h2>
@@ -133,18 +192,24 @@ class Demos extends Component {
       </div>
       <h2 className="block">Preview</h2>
       {this.renderIrisTable()}
-      <h2 className="block">Training</h2>
+      <h2 className="block">Hyperparameters</h2>
       {this.renderTrainParameters()}
+      <h2 className="block">Model</h2>
+      {this.renderModel(datasetSize)}
+      <h2 className="block">Training</h2>
+      <Button type="primary" size="large">TRAIN</Button>
+      <h2 className="block">Cost</h2>
     </Card>
   )
 
   render() {
+    const datasetSize = iris.length;
     return (
       <div className="demos">
         <Header current="demos" />
         <Content>
           <div>
-            {this.renderIris()}
+            {this.renderIris(datasetSize)}
           </div>
         </Content>
       </div>
@@ -158,5 +223,4 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = {
 };
 
-Demos.propTypes = propTypes;
 export default connect(mapStateToProps, mapDispatchToProps)(Demos);
