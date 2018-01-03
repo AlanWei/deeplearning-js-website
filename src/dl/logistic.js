@@ -1,13 +1,15 @@
 import { map, omit, pick, values } from 'lodash';
 import {
   Array2D,
+  Normalization,
+  convertArray2DToArray1D,
   initializeParameters,
   forwardPropagation,
   train,
 } from 'deeplearning-js';
 import iris from './data/iris';
 
-function formatDataSet(dataset, target) {
+function formatDataSet(dataset, target, isNormalized) {
   const datasetSize = dataset.length;
   let inputValues = [];
   let outputValues = [];
@@ -19,11 +21,23 @@ function formatDataSet(dataset, target) {
     outputValues = outputValues.concat(output.species === target ? 1 : 0);
   });
 
+  const input = new Array2D(
+    [datasetSize, inputValues.length / datasetSize],
+    inputValues,
+  ).transpose();
+
+  const matrix = map(input.matrix, subArray => (
+    isNormalized ? Normalization.rescaling(subArray) : subArray
+  ));
+
   return {
     input: new Array2D(
-      [datasetSize, inputValues.length / datasetSize],
-      inputValues,
-    ).transpose(),
+      [inputValues.length / datasetSize, datasetSize],
+      convertArray2DToArray1D(
+        [inputValues.length / datasetSize, datasetSize],
+        matrix,
+      ),
+    ),
     output: new Array2D(
       [outputValues.length / datasetSize, datasetSize],
       outputValues,
@@ -63,7 +77,7 @@ export default function logistic(
   hiddenLayerSize,
   onTrainingend,
 ) {
-  const trainSet = formatDataSet(iris, target);
+  const trainSet = formatDataSet(iris, target, isNormalized);
 
   const initialParameters = initializeParameters([{
     size: trainSet.input.shape[0],
@@ -82,7 +96,7 @@ export default function logistic(
     'cross-entropy',
     learningRate,
     numOfIterations,
-    1,
+    10,
   ).then((ro) => {
     const { parameters, costs } = ro;
     predict(trainSet.input, trainSet.output, parameters, 'training');

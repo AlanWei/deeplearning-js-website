@@ -3,6 +3,7 @@ import keys from 'lodash/keys';
 
 function formatCostsToChartData(costs) {
   return map(costs, cost => ({
+    name: `${keys(cost)[0]} epoch`,
     i: keys(cost)[0],
     cost: cost[keys(cost)[0]],
   }));

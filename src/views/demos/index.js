@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
@@ -207,21 +207,20 @@ class Demos extends Component {
     </div>
   )
 
-  renderCostGraph = () => {
-    return (
+  renderCostGraph = () => (
+    <ResponsiveContainer height={320} width="100%">
       <LineChart
-        height={400}
         data={this.state.costs}
       >
-        <XAxis dataKey="name" />
-        <YAxis />
-        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="i" />
+        <YAxis dataKey="cost" />
+        <CartesianGrid strokeDasharray="5 5" />
         <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="cost" stroke="#82ca9d" />
+        <Legend iconType="circle" />
+        <Line type="monotone" dataKey="cost" stroke="#1890ff" />
       </LineChart>
-    );
-  }
+    </ResponsiveContainer>
+  )
 
   renderIris = datasetSize => (
     <Card title="Logistic regression - Iris">
