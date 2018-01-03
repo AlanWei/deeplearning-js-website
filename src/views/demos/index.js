@@ -1,22 +1,42 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Card, Table } from 'antd';
+import { Card, Table, Select } from 'antd';
 import slice from 'lodash/slice';
+import map from 'lodash/map';
 import Header from '../header';
 import Content from '../content';
+import iris from '../../dl/data/iris';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
-import iris from '../../dl/data/iris.json';
+import { LEARNING_RATES, EPOCHES } from './const';
 import './index.scss';
 
 const { Meta } = Card;
+const { Option } = Select;
 
 const propTypes = {
 };
 
 class Demos extends Component {
+  state = {
+    learningRate: 0.01,
+    epoch: 1000,
+  }
+
+  handleLearningRateSelect = (value) => {
+    this.setState({
+      learningRate: value,
+    });
+  }
+
+  handleEpochSelect = (value) => {
+    this.setState({
+      epoch: value,
+    });
+  }
+
   renderIrisImages = () => (
     <div className="irisSpecies">
       <Card
@@ -50,7 +70,11 @@ class Demos extends Component {
   )
 
   renderIrisTable = () => {
-    const dataSource = slice(iris, 0, 3).concat(slice(iris, 50, 53)).concat(slice(iris, 100, 103));
+    const dataArray = slice(iris, 0, 3).concat(slice(iris, 50, 53)).concat(slice(iris, 100, 103));
+    const dataSource = map(dataArray, (obj, idx) => ({
+      ...obj,
+      key: idx,
+    }));
     const columns = [{
       title: 'Sepal Length',
       dataIndex: 'sepalLength',
@@ -83,6 +107,23 @@ class Demos extends Component {
     );
   }
 
+  renderTrainParameters = () => (
+    <div>
+      <span className="parameterLabel">Learning rate</span>
+      <Select className="parameterSelect" defaultValue={this.state.learningRate} onChange={this.handleLearningRateSelect}>
+        {map(LEARNING_RATES, learningRate => (
+          <Option value={learningRate} key={learningRate}>{learningRate}</Option>
+        ))}
+      </Select>
+      <span className="parameterLabel">Epoch</span>
+      <Select className="parameterSelect" defaultValue={this.state.epoch} onChange={this.handleEpochSelect}>
+        {map(EPOCHES, epoch => (
+          <Option value={epoch} key={epoch}>{epoch}</Option>
+        ))}
+      </Select>
+    </div>
+  )
+
   renderIris = () => (
     <Card title="Logistic regression - Iris">
       {this.renderIrisImages()}
@@ -93,6 +134,7 @@ class Demos extends Component {
       <h2 className="block">Preview</h2>
       {this.renderIrisTable()}
       <h2 className="block">Training</h2>
+      {this.renderTrainParameters()}
     </Card>
   )
 
