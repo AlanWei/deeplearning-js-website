@@ -24,6 +24,8 @@ module.exports = {
       'redux-thunk',
       'reselect',
       'antd',
+      'recharts',
+      'deeplearning-js',
     ],
     client: './index.js',
   },

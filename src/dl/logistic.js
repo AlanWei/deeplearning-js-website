@@ -75,10 +75,8 @@ export default function logistic(
   numOfIterations,
   isNormalized,
   hiddenLayerSize,
-  onTrainingend,
 ) {
   const trainSet = formatDataSet(iris, target, isNormalized);
-
   const initialParameters = initializeParameters([{
     size: trainSet.input.shape[0],
   }, {
@@ -89,7 +87,7 @@ export default function logistic(
     activationFunc: 'sigmoid',
   }], 0, 1, 0.01);
 
-  train(
+  return train(
     trainSet.input,
     trainSet.output,
     initialParameters,
@@ -97,11 +95,5 @@ export default function logistic(
     learningRate,
     numOfIterations,
     10,
-  ).then((ro) => {
-    const { parameters, costs } = ro;
-    predict(trainSet.input, trainSet.output, parameters, 'training');
-    onTrainingend(parameters, costs);
-  }).catch((err) => {
-    console.log(err);
-  });
+  );
 }

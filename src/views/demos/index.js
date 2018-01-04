@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
 import Content from '../content';
 import iris from '../../dl/data/iris';
+import logistic from '../../dl/logistic';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
 import { LEARNING_RATES, EPOCHES, SPECIES } from './const';
-import { formatCostsToChartData } from './formatter';
 import './index.scss';
-import logistic from '../../dl/logistic';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -31,13 +30,9 @@ class Demos extends Component {
     hiddenLayerAct: 'relu',
     outputLayerSize: 1,
     outputLayerAct: 'sigmoid',
+    //
+    parameters: {},
     costs: [],
-  }
-
-  onTrainEnd = (parameters, costs) => {
-    this.setState({
-      costs: formatCostsToChartData(costs),
-    });
   }
 
   handleTargetSpeciesSelect = (value) => {
@@ -71,14 +66,18 @@ class Demos extends Component {
   }
 
   handleTrain = () => {
-    logistic(
+    const { parameters, costs } = logistic(
       this.state.targetSpecies,
       this.state.learningRate,
       this.state.epoch,
       this.state.isNormalized,
       this.state.hiddenLayerSize,
-      this.onTrainEnd,
     );
+
+    this.setState({
+      parameters,
+      costs,
+    });
   }
 
   renderIrisImages = () => (
@@ -211,12 +210,15 @@ class Demos extends Component {
     <ResponsiveContainer height={320} width="100%">
       <LineChart
         data={this.state.costs}
+        margin={{ right: 10 }}
       >
-        <XAxis dataKey="i" />
+        <XAxis dataKey="epoch">
+          <Label value="Epoch" position="insideBottomRight" offset={-10} />
+        </XAxis>
         <YAxis dataKey="cost" />
         <CartesianGrid strokeDasharray="5 5" />
         <Tooltip />
-        <Legend iconType="circle" />
+        <Legend />
         <Line type="monotone" dataKey="cost" stroke="#1890ff" />
       </LineChart>
     </ResponsiveContainer>
