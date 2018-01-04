@@ -53,23 +53,17 @@ function predict(
   input,
   output,
   parameters,
-  datasetType,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
   const predictSet = formatNumToBool(forward);
   const correctSet = formatNumToBool(output);
-  let correctCount = 0;
-  map(predictSet, (num, idx) => {
-    if (num === correctSet[idx]) {
-      correctCount += 1;
-    }
-  });
-
-  console.log(`${datasetType} set accuracy: ${(correctCount / correctSet.length) * 100}%`);
-  console.log(`${datasetType} set correct count: ${correctCount}`);
+  return {
+    predictSet,
+    correctSet,
+  };
 }
 
-export default function logistic(
+function logistic(
   target,
   learningRate,
   numOfIterations,
@@ -87,7 +81,7 @@ export default function logistic(
     activationFunc: 'sigmoid',
   }], 0, 1, 0.01);
 
-  return train(
+  const { parameters, costs } = train(
     trainSet.input,
     trainSet.output,
     initialParameters,
@@ -96,4 +90,15 @@ export default function logistic(
     numOfIterations,
     10,
   );
+
+  return {
+    trainSet,
+    parameters,
+    costs,
+  };
 }
+
+export {
+  logistic,
+  predict,
+};

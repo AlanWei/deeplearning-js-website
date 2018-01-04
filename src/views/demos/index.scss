@@ -1,7 +1,7 @@
 @import "../../styles/helpers";
 
 .demos {
-  .block {
+  .h2block {
     margin: 24px 0 16px 0;
   }
   .irisSpecies {
@@ -39,5 +39,11 @@
         height: 12px;
       }
     }
+  }
+  .predict {
+    display: flex;
+  }
+  .textBlock {
+    margin-bottom: 6px;    
   }
 }

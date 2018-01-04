@@ -7,7 +7,7 @@ import map from 'lodash/map';
 import Header from '../header';
 import Content from '../content';
 import iris from '../../dl/data/iris';
-import logistic from '../../dl/logistic';
+import { logistic, predict } from '../../dl/logistic';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
@@ -31,6 +31,10 @@ class Demos extends Component {
     outputLayerSize: 1,
     outputLayerAct: 'sigmoid',
     //
+    trainSet: {
+      input: [],
+      output: [],
+    },
     parameters: {},
     costs: [],
   }
@@ -66,7 +70,7 @@ class Demos extends Component {
   }
 
   handleTrain = () => {
-    const { parameters, costs } = logistic(
+    const { trainSet, parameters, costs } = logistic(
       this.state.targetSpecies,
       this.state.learningRate,
       this.state.epoch,
@@ -75,6 +79,7 @@ class Demos extends Component {
     );
 
     this.setState({
+      trainSet,
       parameters,
       costs,
     });
@@ -119,19 +124,19 @@ class Demos extends Component {
       key: idx,
     }));
     const columns = [{
-      title: 'Sepal Length',
+      title: 'Sepal Length (cm)',
       dataIndex: 'sepalLength',
       key: 'sepalLength',
     }, {
-      title: 'Sepal Width',
+      title: 'Sepal Width (cm)',
       dataIndex: 'sepalWidth',
       key: 'sepalWidth',
     }, {
-      title: 'Petal Length',
+      title: 'Petal Length (cm)',
       dataIndex: 'petalLength',
       key: 'petalLength',
     }, {
-      title: 'Petal Width',
+      title: 'Petal Width (cm)',
       dataIndex: 'petalWidth',
       key: 'petalWidth',
     }, {
@@ -224,23 +229,77 @@ class Demos extends Component {
     </ResponsiveContainer>
   )
 
+  renderPredict = (datasetSize) => {
+    const { trainSet, parameters } = this.state;
+    const { predictSet, correctSet } = predict(trainSet.input, trainSet.output, parameters);
+    const dataSource = map(iris, (obj, idx) => ({
+      key: idx,
+      index: idx + 1,
+      species: obj.species,
+      correct: obj.species === this.state.targetSpecies ? 1 : 0,
+      predict: predictSet[idx],
+    }));
+    let correctCount = 0;
+    map(predictSet, (num, idx) => {
+      if (num === correctSet[idx]) {
+        correctCount += 1;
+      }
+    });
+    const accuracy = `${(correctCount / datasetSize).toFixed(5) * 100}%`;
+    const columns = [{
+      title: 'Index',
+      dataIndex: 'index',
+      key: 'index',
+    }, {
+      title: 'Species',
+      dataIndex: 'species',
+      key: 'species',
+    }, {
+      title: 'Correct',
+      dataIndex: 'correct',
+      key: 'correct',
+    }, {
+      title: 'Predict',
+      dataIndex: 'predict',
+      key: 'predict',
+    }];
+    return (
+      <Table
+        className="irisTable"
+        dataSource={dataSource}
+        columns={columns}
+        bordered
+        pagination={{ pageSize: 50 }}
+        footer={() => (
+          <div>
+            <div className="textBlock">Data set size: {datasetSize}</div>
+            <div className="textBlock">Correct count: {correctCount}</div>
+            <div className="textBlock">Accuracy: {accuracy}</div>
+          </div>
+        )}
+      />
+    );
+  }
+
   renderIris = datasetSize => (
     <Card title="Logistic regression - Iris">
       {this.renderIrisImages()}
-      <h2 className="block">Description</h2>
+      <h2 className="h2block">Description</h2>
       <div className="irisDesc">
         Iris data set consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres.
       </div>
-      <h2 className="block">Preview</h2>
+      <h2 className="h2block">Preview</h2>
       {this.renderIrisTable()}
-      <h2 className="block">Hyperparameters</h2>
+      <h2 className="h2block">Hyperparameters</h2>
       {this.renderTrainParameters()}
-      <h2 className="block">Model</h2>
+      <h2 className="h2block">Model</h2>
       {this.renderModel(datasetSize)}
-      <h2 className="block">Training</h2>
+      <h2 className="h2block">Training</h2>
       <Button type="primary" size="large" onClick={this.handleTrain}>TRAIN</Button>
-      <h2 className="block">Cost</h2>
+      <h2 className="h2block">Cost</h2>
       {this.renderCostGraph()}
+      <h2 className="h2block">Predict</h2>
+      {this.renderPredict(datasetSize)}
     </Card>
   )
 
