@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Menu } from 'antd';
 import './index.scss';
 
+const GITHUB_URL = 'https://github.com/AlanWei/deeplearning-js';
+
 const propTypes = {
   current: PropTypes.string,
 };
@@ -22,6 +24,7 @@ class Header extends Component {
       <Menu.Item key="home"><Link to="/" href="/">Home</Link></Menu.Item>
       <Menu.Item key="demos"><Link to="/demos" href="/demos">Demos</Link></Menu.Item>
       <Menu.Item key="api"><Link to="/api" href="/api">API</Link></Menu.Item>
+      <Menu.Item key="code"><a href={GITHUB_URL} target="_blank">Code</a></Menu.Item>
     </Menu>
   );
 
