@@ -306,10 +306,10 @@ class Demos extends Component {
   render() {
     const datasetSize = iris.length;
     return (
-      <div className="demos">
+      <div className="pageRoot">
         <Header current="demos" />
         <Content>
-          <div>
+          <div className="demos">
             {this.renderIris(datasetSize)}
           </div>
         </Content>

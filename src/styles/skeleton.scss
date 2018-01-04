@@ -30,7 +30,16 @@ button {
 
 a {
 	text-decoration: none;
-	color: $ui-text;
+  color: $ui-text;
+  :hover {
+    text-decoration: none;
+  }
+  :active {
+    text-decoration: none;
+  }
+  :focus {
+    text-decoration: none;
+  }
 }
 
 ul {

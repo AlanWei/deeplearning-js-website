@@ -10,7 +10,12 @@
   color: $ui-white;
   .appName {
     font-size: 1.25em;
-    color: $ui-white;
+    a {
+      color: $ui-white;
+      &:hover {
+        color: $ui-white;
+      }
+    }
   }
   .menu {
     background-color: $ui-primary;
