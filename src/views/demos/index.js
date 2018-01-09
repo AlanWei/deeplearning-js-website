@@ -21,6 +21,7 @@ const { Option } = Select;
 class Demos extends Component {
   state = {
     currentDemo: 'logistic',
+    isTraining: false,
     //
     targetSpecies: 'setosa',
     learningRate: 0.003,
@@ -71,18 +72,24 @@ class Demos extends Component {
   }
 
   handleTrain = () => {
-    const { trainSet, parameters, costs } = logistic(
-      this.state.targetSpecies,
-      this.state.learningRate,
-      this.state.epoch,
-      this.state.isNormalized,
-      this.state.hiddenLayerSize,
-    );
-
     this.setState({
-      trainSet,
-      parameters,
-      costs,
+      isTraining: true,
+    }, () => {
+      setTimeout(() => {
+        const { trainSet, parameters, costs } = logistic(
+          this.state.targetSpecies,
+          this.state.learningRate,
+          this.state.epoch,
+          this.state.isNormalized,
+          this.state.hiddenLayerSize,
+        );
+        this.setState({
+          trainSet,
+          parameters,
+          costs,
+          isTraining: false,
+        });
+      }, 500);
     });
   }
 
@@ -297,7 +304,7 @@ class Demos extends Component {
       <h2 className="h2block">Model</h2>
       {this.renderModel(datasetSize)}
       <h2 className="h2block">Training</h2>
-      <Button type="primary" size="large" onClick={this.handleTrain}>TRAIN</Button>
+      <Button type="primary" size="large" loading={this.state.isTraining} onClick={this.handleTrain}>TRAIN</Button>
       <h2 className="h2block">Cost</h2>
       {this.renderCostGraph()}
       <h2 className="h2block">Predict</h2>
