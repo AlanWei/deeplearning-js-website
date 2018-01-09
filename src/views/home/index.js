@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Button } from 'antd';
 import Header from '../header';
 import Content from '../content';
+import Footer from '../footer';
 import Github from './Github';
 import './index.scss';
 
@@ -26,6 +27,7 @@ class Home extends Component {
             <Github />
           </div>
         </Content>
+        <Footer />
       </div>
     );
   }

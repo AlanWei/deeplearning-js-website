@@ -6,6 +6,7 @@ import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
 import Content from '../content';
+import Footer from '../footer';
 import iris from '../../dl/data/iris';
 import { logistic, predict } from '../../dl/logistic';
 import setosa from './iris/setosa.jpg';
@@ -329,6 +330,7 @@ class Demos extends Component {
           </div>
           {this.renderContent()}
         </Content>
+        <Footer />
       </div>
     );
   }

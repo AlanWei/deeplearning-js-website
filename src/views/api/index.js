@@ -4,6 +4,7 @@ import { Menu } from 'antd';
 import Markdown from 'markdown-to-jsx';
 import Header from '../header';
 import Content from '../content';
+import Footer from '../footer';
 import './index.scss';
 
 const { SubMenu } = Menu;
@@ -243,6 +244,7 @@ class API extends Component {
             </Markdown>
           </div>
         </Content>
+        <Footer />
       </div>
     );
   }
