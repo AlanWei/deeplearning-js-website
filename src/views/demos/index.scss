@@ -1,6 +1,22 @@
 @import "../../styles/helpers";
 
 .demos {
+  .sider {
+    .ant-menu-item {
+      font-size: 16px;
+      padding: 0 16px 0 40px;
+    }
+  }
+  .pageContent {
+    border-left: 1px solid $ui-border;
+    margin-left: -1px;
+    @media screen and (max-width: 1281px) {
+      padding: 0 64px 40px 32px;
+    }
+    @media screen and (min-width: 1281px) {
+      padding: 0 170px 40px 64px;
+    }
+  }
   .h2block {
     margin: 24px 0 16px 0;
   }
@@ -45,6 +61,6 @@
     display: flex;
   }
   .textBlock {
-    margin-bottom: 6px;    
+    margin-bottom: 6px;
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
+import { Card, Table, Select, Switch, InputNumber, Button, Row, Col, Menu } from 'antd';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
@@ -11,16 +11,16 @@ import { logistic, predict } from '../../dl/logistic';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
-import { LEARNING_RATES, EPOCHES, SPECIES } from './const';
+import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS } from './const';
 import './index.scss';
 
 const { Meta } = Card;
 const { Option } = Select;
 
-const DIMS = 4;
-
 class Demos extends Component {
   state = {
+    currentDemo: 'logistic',
+    //
     targetSpecies: 'setosa',
     learningRate: 0.003,
     epoch: 500,
@@ -182,15 +182,15 @@ class Demos extends Component {
 
   renderModel = datasetSize => (
     <div className="model">
-      <Card className="modelLayer" title="Input Layer" extra={<span>[{DIMS}, {datasetSize}]</span>}>
+      <Card className="modelLayer" title="Input Layer" extra={<span>[{IRIS_DIMS}, {datasetSize}]</span>}>
         <div className="layerBlock">Data set:</div>
         <a href="../../dl/data/iris.json" target="_blank">Iris</a>
       </Card>
-      <Card className="modelLayer" title="Data Preprocess" extra={<span>[{DIMS}, {datasetSize}]</span>}>
+      <Card className="modelLayer" title="Data Preprocess" extra={<span>[{IRIS_DIMS}, {datasetSize}]</span>}>
         <div className="layerBlock">Data Normalization:</div>
         <Switch checked={this.state.isNormalized} onChange={this.handlePreprocessSwitch} />
       </Card>
-      <Card className="modelLayer" title="Hidden Layer" extra={<span>[{this.state.hiddenLayerSize}, {DIMS}]</span>}>
+      <Card className="modelLayer" title="Hidden Layer" extra={<span>[{this.state.hiddenLayerSize}, {IRIS_DIMS}]</span>}>
         <div className="layerBlock">Activation function:</div>
         <Select className="parameterSelect" defaultValue={this.state.hiddenLayerAct} disabled />
         <div className="divider" />
@@ -282,13 +282,13 @@ class Demos extends Component {
   }
 
   renderIris = datasetSize => (
-    <div>
+    <div className="pageContent">
       <h1>Logistic regression - Iris</h1>
-      {this.renderIrisImages()}
       <h2 className="h2block">Description</h2>
       <div className="irisDesc">
         Iris data set consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres.
       </div>
+      {this.renderIrisImages()}
       <h2 className="h2block">Preview</h2>
       {this.renderIrisTable()}
       <h2 className="h2block">Hyperparameters</h2>
@@ -304,15 +304,32 @@ class Demos extends Component {
     </div>
   )
 
+  renderSider = () => (
+    <div className="sider">
+      <Menu selectedKeys={[this.state.currentDemo]}>
+        <Menu.Item key="logistic">Logistic regression</Menu.Item>
+      </Menu>
+    </div>
+  )
+
+  renderContent = () => {
+    switch (this.state.currentDemo) {
+      case 'logistic':
+        return this.renderIris(iris.length);
+      default:
+        return null;
+    }
+  }
+
   render() {
-    const datasetSize = iris.length;
     return (
       <div className="pageRoot">
         <Header current="demos" />
         <Content>
-          <div className="demos">
-            {this.renderIris(datasetSize)}
-          </div>
+          <Row className="demos">
+            <Col span={4}>{this.renderSider()}</Col>
+            <Col span={20}>{this.renderContent()}</Col>
+          </Row>
         </Content>
       </div>
     );
