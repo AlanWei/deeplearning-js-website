@@ -1,5 +1,5 @@
 node_modules/
-build/
+dl-js/
 stats/
 coverage/
 npm-debug.log
