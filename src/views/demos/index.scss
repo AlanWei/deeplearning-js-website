@@ -2,12 +2,10 @@
 
 .demos {
   display: flex;
+  padding-top: 40px;
   .sider {
     flex: 1;
     min-width: 224px;
-    .ant-menu-item {
-      padding: 0 16px 0 40px;
-    }
     .menuItem {
       font-weight: 500;
     }

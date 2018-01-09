@@ -306,7 +306,10 @@ class Demos extends Component {
   )
 
   renderSider = () => (
-    <Menu selectedKeys={[this.state.currentDemo]}>
+    <Menu
+      mode="inline"
+      selectedKeys={[this.state.currentDemo]}
+    >
       <Menu.Item key="logistic" className="menuItem">Logistic regression</Menu.Item>
     </Menu>
   )
