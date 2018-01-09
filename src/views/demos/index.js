@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Card, Table, Select, Switch, InputNumber, Button, Row, Col, Menu } from 'antd';
+import { Card, Table, Select, Switch, InputNumber, Button, Menu } from 'antd';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
@@ -305,11 +305,9 @@ class Demos extends Component {
   )
 
   renderSider = () => (
-    <div className="sider">
-      <Menu selectedKeys={[this.state.currentDemo]}>
-        <Menu.Item key="logistic">Logistic regression</Menu.Item>
-      </Menu>
-    </div>
+    <Menu selectedKeys={[this.state.currentDemo]}>
+      <Menu.Item key="logistic" className="menuItem">Logistic regression</Menu.Item>
+    </Menu>
   )
 
   renderContent = () => {
@@ -325,11 +323,11 @@ class Demos extends Component {
     return (
       <div className="pageRoot">
         <Header current="demos" />
-        <Content>
-          <Row className="demos">
-            <Col span={4}>{this.renderSider()}</Col>
-            <Col span={20}>{this.renderContent()}</Col>
-          </Row>
+        <Content className="demos">
+          <div className="sider">
+            {this.renderSider()}
+          </div>
+          {this.renderContent()}
         </Content>
       </div>
     );

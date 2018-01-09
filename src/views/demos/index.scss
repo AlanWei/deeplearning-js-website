@@ -1,13 +1,19 @@
 @import "../../styles/helpers";
 
 .demos {
+  display: flex;
   .sider {
+    flex: 1;
+    min-width: 224px;
     .ant-menu-item {
-      font-size: 16px;
       padding: 0 16px 0 40px;
+    }
+    .menuItem {
+      font-weight: 500;
     }
   }
   .pageContent {
+    flex: 4;
     border-left: 1px solid $ui-border;
     margin-left: -1px;
     @media screen and (max-width: 1281px) {

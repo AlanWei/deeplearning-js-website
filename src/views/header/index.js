@@ -31,9 +31,9 @@ class Header extends Component {
   render() {
     return (
       <header className="header">
-        <h1 className="appName">
+        <div className="appName">
           <Link to="/" href="/">deeplearning-js</Link>
-        </h1>
+        </div>
         {this.renderMenu()}
       </header>
     );
