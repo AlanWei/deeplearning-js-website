@@ -269,7 +269,7 @@ class Demos extends Component {
         dataSource={dataSource}
         columns={columns}
         bordered
-        pagination={{ pageSize: 50 }}
+        pagination={{ pageSize: 25 }}
         footer={() => (
           <div>
             <div className="textBlock">Data set size: {datasetSize}</div>
@@ -282,7 +282,8 @@ class Demos extends Component {
   }
 
   renderIris = datasetSize => (
-    <Card title="Logistic regression - Iris">
+    <div>
+      <h1>Logistic regression - Iris</h1>
       {this.renderIrisImages()}
       <h2 className="h2block">Description</h2>
       <div className="irisDesc">
@@ -300,7 +301,7 @@ class Demos extends Component {
       {this.renderCostGraph()}
       <h2 className="h2block">Predict</h2>
       {this.renderPredict(datasetSize)}
-    </Card>
+    </div>
   )
 
   render() {

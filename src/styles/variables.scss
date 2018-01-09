@@ -7,9 +7,8 @@ $ui-white-darken-5: #9b9b9b !default;
 
 $ui-primary: #002140 !default;
 
-$ui-black: #40485a !default;
-$ui-black-lighten: #5a6274 !default;
-$ui-black-darken: #272f41 !default;
+$ui-black-darken: #0d1a26 !default;
+$ui-black: #314659 !default;
 
 $ui-green: #3ac88e !default;
 $ui-green-lighten: #54e2a8 !default;
@@ -25,7 +24,7 @@ $ui-blue-darken: #0f56c3 !default;
 
 // Aliases
 $ui-text: $ui-black !default;
-$ui-text-lighten: $ui-white-darken-5 !default;
+$ui-text-title: $ui-black-darken !default;
 $ui-disabled: $ui-white-darken-4 !default;
 $ui-success: $ui-green !default;
 $ui-info: $ui-blue !default;

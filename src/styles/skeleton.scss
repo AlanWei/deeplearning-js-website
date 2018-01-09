@@ -13,13 +13,19 @@
 }
 
 h1 {
-	font-size: 20px;
-	margin: 0;
+	color: $ui-text-title;
+	font-weight: 500;
+	margin-bottom: 20px;
+	margin-top: 8px;
+	font-size: 30px;
+	line-height: 38px;
 }
 
 h2 {
-	font-size: 14px;
-	margin: 0;
+	color: $ui-text-title;
+	font-size: 18px;
+	font-weight: 500;
+	clear: both;
 }
 
 button {
