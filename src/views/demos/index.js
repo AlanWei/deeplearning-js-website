@@ -277,7 +277,7 @@ class Demos extends Component {
         dataSource={dataSource}
         columns={columns}
         bordered
-        pagination={{ pageSize: 25 }}
+        pagination={{ pageSize: 10 }}
         footer={() => (
           <div>
             <div className="textBlock">Data set size: {datasetSize}</div>
