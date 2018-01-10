@@ -1,110 +1,154 @@
-import map from 'lodash/map';
-import slice from 'lodash/slice';
-import max from 'lodash/max';
-import findIndex from 'lodash/findIndex';
-import mnist from 'mnist';
+import { map, omit, pick, values, indexOf, max } from 'lodash';
 import {
   Array2D,
   initializeParameters,
   forwardPropagation,
   train,
-} from 'deeplearning-js';
+  Normalization,
+  convertArray2DToArray1D,
+} from '../src';
+import * as irisTrain from './data/iris.train.json';
+import * as irisTest from './data/iris.test.json';
 
-function formatDataSet(dataset) {
+function formatDataSet(dataset: any) {
   const datasetSize = dataset.length;
-  let inputValues = [];
-  let outputValues = [];
-  map(dataset, (example) => {
-    inputValues = inputValues.concat(example.input);
-    outputValues = outputValues.concat(example.output);
+  let inputValues: Array<number> = [];
+  let outputValues: Array<number> = [];
+
+  map(dataset, (example: {
+    "sepalLength": number,
+    "sepalWidth": number,
+    "petalLength": number,
+    "petalWidth": number,
+    "species": string,
+  }) => {
+    const input: any = omit(example, 'species');
+    const output: any = pick(example, 'species');
+    inputValues = inputValues.concat(values(input));
+    let result = [1, 0, 0];
+    switch (output.species) {
+      case 'setosa':
+        result = [1, 0, 0];
+        break;
+      case  'versicolor':
+        result = [0, 1, 0];
+        break;
+      case 'virginica':
+        result = [0, 0, 1];
+        break;
+      default:
+        break;
+    }
+    outputValues = outputValues.concat(result);
   });
+
+  const input = new Array2D(
+    [datasetSize, inputValues.length / datasetSize],
+    inputValues,
+  ).transpose();
+
+  const matrix = map(input.matrix, (subArray) => (
+    Normalization.meanNormalization(subArray)
+  ));
+
   return {
     input: new Array2D(
       [inputValues.length / datasetSize, datasetSize],
-      inputValues,
+      convertArray2DToArray1D(
+        [inputValues.length / datasetSize, datasetSize],
+        matrix
+      ),
     ),
     output: new Array2D(
-      [outputValues.length / datasetSize, datasetSize],
+      [datasetSize, outputValues.length / datasetSize],
       outputValues,
-    ),
+    ).transpose(),
   };
 }
 
-function formatBoolToNum(output) {
-  const rows = output.shape[0];
-  const outputT = output.transpose();
-  const outputTValues = outputT.values;
-  const result = [];
-  for (let i = 0; i < outputTValues.length / rows; i += 1) {
-    const subArray = slice(outputTValues, i * rows, (i + 1) * rows);
-    const maxValue = max(subArray);
-    for (let j = 0; j < subArray.length; j += 1) {
-      if (maxValue === subArray[j]) {
-        result.push(j);
-      }
-    }
-  }
-  return result;
-}
-
-function predict(input, output, parameters, datasetType) {
+function predict(
+  input: Array2D,
+  output: Array2D,
+  parameters: any,
+  datasetType: string,
+  step: number,
+) {
   const forward = forwardPropagation(input, parameters).yHat;
-  const predictSet = formatBoolToNum(forward);
-  const correctSet = formatBoolToNum(output);
+  const transform = map(forward.transpose().matrix, (subArray) => {
+    const maxIdx = indexOf(subArray, max(subArray));
+    return map(subArray, (num, idx) => (idx === maxIdx ? 1 : 0));
+  });
+  const predictSet = new Array2D(
+    [output.shape[1], output.shape[0]],
+    convertArray2DToArray1D([output.shape[1], output.shape[0]], transform),
+  ).transpose();
+
   let correctCount = 0;
-  map(predictSet, (num, idx) => {
-    if (num === correctSet[idx]) {
+  let correctCount1 = 0;
+  let correctCount2 = 0;
+  let correctCount3 = 0;
+  map(predictSet.transpose().matrix, (subArray, idx) => {
+    const correctSubArr = output.transpose().matrix[idx];
+    const maxIdx = indexOf(subArray, max(subArray));
+    const correctMaxIdx = indexOf(correctSubArr, max(correctSubArr));
+    if (maxIdx === correctMaxIdx) {
+      if (idx < step) {
+        correctCount1 += 1;
+      } else if (idx >= step && idx < step * 2) {
+        correctCount2 += 1;
+      } else {
+        correctCount3 += 1;
+      }
       correctCount += 1;
     }
   });
 
-  console.log(`${datasetType} set accuracy: ${(correctCount / correctSet.length) * 100}%`);
+  console.log(
+    `${datasetType} set accuracy: ${(correctCount / output.shape[1]) * 100}%`,
+  );
   console.log(`${datasetType} set correct count: ${correctCount}`);
+  console.log(correctCount1);
+  console.log(correctCount2);
+  console.log(correctCount3);
 }
 
-export default function main(
-  trainingSetSize,
-  testSetSize,
-  learningRate,
-  numOfIterations,
-  baseIterationToShowCost,
-  learningRateDecayRate,
+export default function softmax(
+  learningRate: number,
+  numOfIterations: number,
+  baseIterationToShowCost: number,
+  learningRateDecayRate?: number,
 ) {
-  const set = mnist.set(trainingSetSize, testSetSize);
-  const trainingSet = formatDataSet(set.training);
-  // const testSet = formatDataSet(set.test);
+  const trainSet = formatDataSet(irisTrain);
+  const testSet = formatDataSet(irisTest);
 
   const initialParameters = initializeParameters([{
-    size: trainingSet.input.shape[0],
+    size: trainSet.input.shape[0],
   }, {
-    size: 56,
+    size: 30,
     activationFunc: 'relu',
   }, {
-    size: trainingSet.output.shape[0],
+    size: 3,
     activationFunc: 'softmax',
   }], 0, 1, 0.01);
 
-  const parameters = train(
-    trainingSet.input,
-    trainingSet.output,
+  const { parameters } = train(
+    trainSet.input,
+    trainSet.output,
     initialParameters,
     'cross-entropy',
     learningRate,
     numOfIterations,
     baseIterationToShowCost,
     learningRateDecayRate,
+    true,
   );
 
-  // predict(
-  //   trainingSet.input,
-  //   trainingSet.output,
-  //   parameters,
-  //   'training',
-  // );
-  // predict(
-  //   testSet.input,
-  //   testSet.output,
-  //   parameters,
-  //   'test',
-  // );
+  predict(trainSet.input, trainSet.output, parameters, 'train', 35);
+  predict(testSet.input, testSet.output, parameters, 'test', 15);
 }
+
+softmax(
+  0.05,
+  1000,
+  100,
+);

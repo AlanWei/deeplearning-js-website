@@ -193,8 +193,7 @@ class Demos extends Component {
       <Card className="modelLayer" title="Input Layer" extra={<span>[{IRIS_DIMS}, {datasetSize}]</span>}>
         <div className="layerBlock">Data set:</div>
         <a href="../../dl/data/iris.json" target="_blank">Iris</a>
-      </Card>
-      <Card className="modelLayer" title="Data Preprocess" extra={<span>[{IRIS_DIMS}, {datasetSize}]</span>}>
+        <div className="divider" />
         <div className="layerBlock">Data Normalization:</div>
         <Switch checked={this.state.isNormalized} onChange={this.handlePreprocessSwitch} />
       </Card>
