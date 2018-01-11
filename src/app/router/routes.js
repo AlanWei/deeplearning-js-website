@@ -1,6 +1,7 @@
 import createAsyncThunk from 'utils/createAsyncThunk';
 import Home from '../../views/home';
-import Demos from '../../views/demos';
+import Logistic from '../../views/demos/logistic';
+import Softmax from '../../views/demos/softmax';
 import API from '../../views/api';
 
 const routes = [{
@@ -9,8 +10,11 @@ const routes = [{
   component: Home,
   thunk: createAsyncThunk(() => import('../../views/home/thunk')),
 }, {
-  path: '/demos',
-  component: Demos,
+  path: '/demos/logistic',
+  component: Logistic,
+}, {
+  path: '/demos/softmax',
+  component: Softmax,
 }, {
   path: '/api',
   component: API,

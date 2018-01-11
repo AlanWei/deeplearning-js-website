@@ -22,7 +22,7 @@ class Header extends Component {
       selectedKeys={[this.props.current]}
     >
       <Menu.Item key="home"><Link to="/" href="/">Home</Link></Menu.Item>
-      <Menu.Item key="demos"><Link to="/demos" href="/demos">Demos</Link></Menu.Item>
+      <Menu.Item key="demos"><Link to="/demos/logistic" href="/demos">Demos</Link></Menu.Item>
       <Menu.Item key="api"><Link to="/api" href="/api">API</Link></Menu.Item>
       <Menu.Item key="code"><a href={GITHUB_URL} target="_blank">Code</a></Menu.Item>
     </Menu>

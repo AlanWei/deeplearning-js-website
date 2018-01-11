@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Card, Table, Select, Switch, InputNumber, Button, Menu } from 'antd';
+import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
 import Header from '../header';
 import Content from '../content';
 import Footer from '../footer';
+import Sider from './Sider';
 import iris from '../../dl/data/iris';
 import { logistic, predict } from '../../dl/logistic';
 import setosa from './iris/setosa.jpg';
@@ -18,9 +18,8 @@ import './index.scss';
 const { Meta } = Card;
 const { Option } = Select;
 
-class Demos extends Component {
+class Logistic extends Component {
   state = {
-    currentDemo: 'logistic',
     isTraining: false,
     //
     targetSpecies: 'setosa',
@@ -311,33 +310,13 @@ class Demos extends Component {
     </div>
   )
 
-  renderSider = () => (
-    <Menu
-      mode="inline"
-      selectedKeys={[this.state.currentDemo]}
-    >
-      <Menu.Item key="logistic" className="menuItem">Logistic regression</Menu.Item>
-    </Menu>
-  )
-
-  renderContent = () => {
-    switch (this.state.currentDemo) {
-      case 'logistic':
-        return this.renderIris(iris.length);
-      default:
-        return null;
-    }
-  }
-
   render() {
     return (
       <div className="pageRoot">
         <Header current="demos" />
         <Content className="demos">
-          <div className="sider">
-            {this.renderSider()}
-          </div>
-          {this.renderContent()}
+          <Sider current="logistic" />
+          {this.renderIris(iris.length)}
         </Content>
         <Footer />
       </div>
@@ -345,10 +324,4 @@ class Demos extends Component {
   }
 }
 
-const mapStateToProps = () => ({
-});
-
-const mapDispatchToProps = {
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Demos);
+export default Logistic;
