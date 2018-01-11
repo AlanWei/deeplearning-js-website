@@ -11,7 +11,6 @@ const routes = [{
 }, {
   path: '/demos',
   component: Demos,
-  thunk: createAsyncThunk(() => import('../../views/demos/thunk')),
 }, {
   path: '/api',
   component: API,

@@ -6,31 +6,25 @@ import {
   train,
   Normalization,
   convertArray2DToArray1D,
-} from '../src';
-import * as irisTrain from './data/iris.train.json';
-import * as irisTest from './data/iris.test.json';
+} from 'deeplearning-js';
+import irisTrain from './data/iris.train';
+import irisTest from './data/iris.test';
 
-function formatDataSet(dataset: any) {
+function formatDataSet(dataset) {
   const datasetSize = dataset.length;
-  let inputValues: Array<number> = [];
-  let outputValues: Array<number> = [];
+  let inputValues = [];
+  let outputValues = [];
 
-  map(dataset, (example: {
-    "sepalLength": number,
-    "sepalWidth": number,
-    "petalLength": number,
-    "petalWidth": number,
-    "species": string,
-  }) => {
-    const input: any = omit(example, 'species');
-    const output: any = pick(example, 'species');
+  map(dataset, (example) => {
+    const input = omit(example, 'species');
+    const output = pick(example, 'species');
     inputValues = inputValues.concat(values(input));
     let result = [1, 0, 0];
     switch (output.species) {
       case 'setosa':
         result = [1, 0, 0];
         break;
-      case  'versicolor':
+      case 'versicolor':
         result = [0, 1, 0];
         break;
       case 'virginica':
@@ -47,7 +41,7 @@ function formatDataSet(dataset: any) {
     inputValues,
   ).transpose();
 
-  const matrix = map(input.matrix, (subArray) => (
+  const matrix = map(input.matrix, subArray => (
     Normalization.meanNormalization(subArray)
   ));
 
@@ -56,7 +50,7 @@ function formatDataSet(dataset: any) {
       [inputValues.length / datasetSize, datasetSize],
       convertArray2DToArray1D(
         [inputValues.length / datasetSize, datasetSize],
-        matrix
+        matrix,
       ),
     ),
     output: new Array2D(
@@ -67,11 +61,11 @@ function formatDataSet(dataset: any) {
 }
 
 function predict(
-  input: Array2D,
-  output: Array2D,
-  parameters: any,
-  datasetType: string,
-  step: number,
+  input,
+  output,
+  parameters,
+  datasetType,
+  step,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
   const transform = map(forward.transpose().matrix, (subArray) => {
@@ -103,9 +97,7 @@ function predict(
     }
   });
 
-  console.log(
-    `${datasetType} set accuracy: ${(correctCount / output.shape[1]) * 100}%`,
-  );
+  console.log(`${datasetType} set accuracy: ${(correctCount / output.shape[1]) * 100}%`);
   console.log(`${datasetType} set correct count: ${correctCount}`);
   console.log(correctCount1);
   console.log(correctCount2);
@@ -113,10 +105,10 @@ function predict(
 }
 
 export default function softmax(
-  learningRate: number,
-  numOfIterations: number,
-  baseIterationToShowCost: number,
-  learningRateDecayRate?: number,
+  learningRate,
+  numOfIterations,
+  baseIterationToShowCost,
+  learningRateDecayRate,
 ) {
   const trainSet = formatDataSet(irisTrain);
   const testSet = formatDataSet(irisTest);
@@ -146,9 +138,3 @@ export default function softmax(
   predict(trainSet.input, trainSet.output, parameters, 'train', 35);
   predict(testSet.input, testSet.output, parameters, 'test', 15);
 }
-
-softmax(
-  0.05,
-  1000,
-  100,
-);
