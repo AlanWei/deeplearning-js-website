@@ -192,7 +192,8 @@ class Softmax extends Component {
     <div className="model">
       <Card className="modelLayer" title="Input Layer" extra={<span>[{IRIS_DIMS}, {datasetSize}]</span>}>
         <div className="layerBlock">Data set:</div>
-        <a href="../../dl/data/iris.json" target="_blank">Iris</a>
+        <div>Iris train set [4, 105]</div>
+        <div>Iris test set [4, 45]</div>
         <div className="divider" />
         <div className="layerBlock">Data Normalization:</div>
         <Switch checked={this.state.isNormalized} onChange={this.handlePreprocessSwitch} />
