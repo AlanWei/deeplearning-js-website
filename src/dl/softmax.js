@@ -1,4 +1,4 @@
-import { map, omit, pick, values, indexOf, max } from 'lodash';
+import { map, omit, pick, values, indexOf, max, isEmpty } from 'lodash';
 import {
   Array2D,
   initializeParameters,
@@ -10,7 +10,7 @@ import {
 import irisTrain from './data/iris.train';
 import irisTest from './data/iris.test';
 
-function formatDataSet(dataset) {
+function formatDataSet(dataset, isNormalized) {
   const datasetSize = dataset.length;
   let inputValues = [];
   let outputValues = [];
@@ -42,7 +42,7 @@ function formatDataSet(dataset) {
   ).transpose();
 
   const matrix = map(input.matrix, subArray => (
-    Normalization.meanNormalization(subArray)
+    isNormalized ? Normalization.meanNormalization(subArray) : subArray
   ));
 
   return {
@@ -64,77 +64,70 @@ function predict(
   input,
   output,
   parameters,
-  datasetType,
-  step,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
+  if (isEmpty(forward)) {
+    return map(output, () => (''));
+  }
   const transform = map(forward.transpose().matrix, (subArray) => {
     const maxIdx = indexOf(subArray, max(subArray));
-    return map(subArray, (num, idx) => (idx === maxIdx ? 1 : 0));
-  });
-  const predictSet = new Array2D(
-    [output.shape[1], output.shape[0]],
-    convertArray2DToArray1D([output.shape[1], output.shape[0]], transform),
-  ).transpose();
-
-  let correctCount = 0;
-  let correctCount1 = 0;
-  let correctCount2 = 0;
-  let correctCount3 = 0;
-  map(predictSet.transpose().matrix, (subArray, idx) => {
-    const correctSubArr = output.transpose().matrix[idx];
-    const maxIdx = indexOf(subArray, max(subArray));
-    const correctMaxIdx = indexOf(correctSubArr, max(correctSubArr));
-    if (maxIdx === correctMaxIdx) {
-      if (idx < step) {
-        correctCount1 += 1;
-      } else if (idx >= step && idx < step * 2) {
-        correctCount2 += 1;
-      } else {
-        correctCount3 += 1;
-      }
-      correctCount += 1;
+    switch (maxIdx) {
+      case 0:
+        return 'setosa';
+      case 1:
+        return 'versicolor';
+      case 2:
+        return 'virginica';
+      default:
+        return '';
     }
   });
 
-  console.log(`${datasetType} set accuracy: ${(correctCount / output.shape[1]) * 100}%`);
-  console.log(`${datasetType} set correct count: ${correctCount}`);
-  console.log(correctCount1);
-  console.log(correctCount2);
-  console.log(correctCount3);
+  return transform;
 }
 
-export default function softmax(
+function softmax(
   learningRate,
   numOfIterations,
-  baseIterationToShowCost,
-  learningRateDecayRate,
+  isNormalized,
+  hiddenLayerSize,
+  errCallback,
 ) {
-  const trainSet = formatDataSet(irisTrain);
-  const testSet = formatDataSet(irisTest);
+  const trainSet = formatDataSet(irisTrain, isNormalized);
+  const testSet = formatDataSet(irisTest, isNormalized);
 
   const initialParameters = initializeParameters([{
     size: trainSet.input.shape[0],
   }, {
-    size: 30,
+    size: hiddenLayerSize,
     activationFunc: 'relu',
   }, {
-    size: 3,
+    size: trainSet.output.shape[0],
     activationFunc: 'softmax',
   }], 0, 1, 0.01);
 
-  const { parameters } = train(
-    trainSet.input,
-    trainSet.output,
-    initialParameters,
-    'cross-entropy',
-    learningRate,
-    numOfIterations,
-    baseIterationToShowCost,
-    learningRateDecayRate,
-    true,
-  );
+  try {
+    const { parameters, costs } = train(
+      trainSet.input,
+      trainSet.output,
+      initialParameters,
+      'cross-entropy',
+      learningRate,
+      numOfIterations,
+      10,
+    );
 
-  predict(trainSet.input, trainSet.output, parameters, 'train', 35);
-  predict(testSet.input, testSet.output, parameters, 'test', 15);
+    return {
+      testSet,
+      parameters,
+      costs,
+    };
+  } catch (err) {
+    return errCallback(err);
+  }
 }
+
+export {
+  softmax,
+  predict,
+};

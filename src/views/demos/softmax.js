@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Table, Select, Switch, InputNumber, Button } from 'antd';
+import { Card, Table, Select, Switch, InputNumber, Button, notification } from 'antd';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, Legend } from 'recharts';
 import slice from 'lodash/slice';
 import map from 'lodash/map';
@@ -8,11 +8,13 @@ import Content from '../content';
 import Footer from '../footer';
 import Sider from './Sider';
 import iris from '../../dl/data/iris';
-import { logistic, predict } from '../../dl/logistic';
+import irisTrain from '../../dl/data/iris.train';
+import irisTest from '../../dl/data/iris.test';
+import { softmax, predict } from '../../dl/softmax';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
-import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS } from './const';
+import { LEARNING_RATES, EPOCHES, IRIS_DIMS } from './const';
 import './index.scss';
 
 const { Meta } = Card;
@@ -22,28 +24,21 @@ class Softmax extends Component {
   state = {
     isTraining: false,
     //
-    targetSpecies: 'setosa',
     learningRate: 0.003,
     epoch: 500,
     costFunc: 'cross-entropy',
     isNormalized: false,
     hiddenLayerSize: 10,
     hiddenLayerAct: 'relu',
-    outputLayerSize: 1,
-    outputLayerAct: 'sigmoid',
+    outputLayerSize: 3,
+    outputLayerAct: 'softmax',
     //
-    trainSet: {
+    testSet: {
       input: [],
       output: [],
     },
     parameters: {},
     costs: [],
-  }
-
-  handleTargetSpeciesSelect = (value) => {
-    this.setState({
-      targetSpecies: value,
-    });
   }
 
   handleLearningRateSelect = (value) => {
@@ -70,24 +65,36 @@ class Softmax extends Component {
     });
   }
 
+  handleTrainError = (err) => {
+    this.setState({
+      isTraining: false,
+    });
+    notification.error({
+      message: 'Error',
+      description: err.message,
+    });
+  }
+
   handleTrain = () => {
     this.setState({
       isTraining: true,
     }, () => {
       setTimeout(() => {
-        const { trainSet, parameters, costs } = logistic(
-          this.state.targetSpecies,
+        const ro = softmax(
           this.state.learningRate,
           this.state.epoch,
           this.state.isNormalized,
           this.state.hiddenLayerSize,
+          this.handleTrainError,
         );
-        this.setState({
-          trainSet,
-          parameters,
-          costs,
-          isTraining: false,
-        });
+        if (ro) {
+          this.setState({
+            testSet: ro.testSet,
+            parameters: ro.parameters,
+            costs: ro.costs,
+            isTraining: false,
+          });
+        }
       }, 500);
     });
   }
@@ -164,12 +171,6 @@ class Softmax extends Component {
 
   renderTrainParameters = () => (
     <div>
-      <span className="parameterLabel">Target Species:</span>
-      <Select className="parameterSelect" defaultValue={this.state.targetSpecies} onChange={this.handleTargetSpeciesSelect}>
-        {map(SPECIES, species => (
-          <Option value={species} key={species}>{species}</Option>
-        ))}
-      </Select>
       <span className="parameterLabel">Learning rate:</span>
       <Select className="parameterSelect" defaultValue={this.state.learningRate} onChange={this.handleLearningRateSelect}>
         {map(LEARNING_RATES, learningRate => (
@@ -212,7 +213,7 @@ class Softmax extends Component {
       </Card>
       <Card className="modelLayer" title="Output" extra={<span>[{this.state.outputLayerSize}, {datasetSize}]</span>}>
         <div className="layerBlock">Description:</div>
-        <div className="layerBlock">A [{this.state.outputLayerSize}, {datasetSize}] matrix with 0 or 1 represents each of {datasetSize} examples is the target species or not</div>
+        <div className="layerBlock"></div>
       </Card>
     </div>
   )
@@ -236,18 +237,17 @@ class Softmax extends Component {
   )
 
   renderPredict = (datasetSize) => {
-    const { trainSet, parameters } = this.state;
-    const { predictSet, correctSet } = predict(trainSet.input, trainSet.output, parameters);
-    const dataSource = map(iris, (obj, idx) => ({
+    const { testSet, parameters } = this.state;
+    const predictSet = predict(testSet.input, irisTest, parameters);
+    const dataSource = map(irisTest, (obj, idx) => ({
       key: idx,
       index: idx + 1,
       species: obj.species,
-      correct: obj.species === this.state.targetSpecies ? 1 : 0,
       predict: predictSet[idx],
     }));
     let correctCount = 0;
-    map(predictSet, (num, idx) => {
-      if (num === correctSet[idx]) {
+    map(predictSet, (species, idx) => {
+      if (species === irisTest[idx].species) {
         correctCount += 1;
       }
     });
@@ -261,10 +261,6 @@ class Softmax extends Component {
       dataIndex: 'species',
       key: 'species',
     }, {
-      title: 'Correct',
-      dataIndex: 'correct',
-      key: 'correct',
-    }, {
       title: 'Predict',
       dataIndex: 'predict',
       key: 'predict',
@@ -275,7 +271,7 @@ class Softmax extends Component {
         dataSource={dataSource}
         columns={columns}
         bordered
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 15 }}
         footer={() => (
           <div>
             <div className="textBlock">Data set size: {datasetSize}</div>
@@ -287,9 +283,9 @@ class Softmax extends Component {
     );
   }
 
-  renderIris = datasetSize => (
+  renderIris = () => (
     <div className="pageContent">
-      <h1>Softmax regression - Iris</h1>
+      <h1>Softmax classifier - Iris</h1>
       <h2 className="h2block">Description</h2>
       <div className="irisDesc">
         Iris data set consists of 50 samples from each of three species of Iris (Iris setosa, Iris virginica and Iris versicolor). Four features were measured from each sample: the length and the width of the sepals and petals, in centimetres.
@@ -300,13 +296,13 @@ class Softmax extends Component {
       <h2 className="h2block">Hyperparameters</h2>
       {this.renderTrainParameters()}
       <h2 className="h2block">Model</h2>
-      {this.renderModel(datasetSize)}
+      {this.renderModel(irisTrain.length)}
       <h2 className="h2block">Training</h2>
       <Button type="primary" size="large" loading={this.state.isTraining} onClick={this.handleTrain}>TRAIN</Button>
       <h2 className="h2block">Cost</h2>
       {this.renderCostGraph()}
       <h2 className="h2block">Predict</h2>
-      {this.renderPredict(datasetSize)}
+      {this.renderPredict(irisTest.length)}
     </div>
   )
 
