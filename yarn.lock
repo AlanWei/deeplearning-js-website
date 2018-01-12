@@ -2129,9 +2129,9 @@ deep-is@~0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/deep-is/-/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
 
-deeplearning-js@^0.3.5:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/deeplearning-js/-/deeplearning-js-0.3.5.tgz#3451e0ad91602380555eadfc6350f492e91a472b"
+deeplearning-js@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/deeplearning-js/-/deeplearning-js-0.3.6.tgz#7f37f589f081494203b045efc7d828943fc6929b"
   dependencies:
     gaussian "^1.1.0"
     lodash "^4.17.4"
