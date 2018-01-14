@@ -115,7 +115,7 @@ module.exports = {
       { from: 'favicon.ico' },
     ]),
     new HtmlWebpackPlugin({
-      title: 'Deeplearning JS',
+      title: 'deeplearning-js',
       filename: './index.html',
       template: './index.ejs',
     }),
