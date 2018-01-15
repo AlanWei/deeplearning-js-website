@@ -14,7 +14,7 @@ import { softmax, predict } from '../../dl/softmax';
 import setosa from './iris/setosa.jpg';
 import versicolor from './iris/versicolor.jpg';
 import virginica from './iris/virginica.jpg';
-import { LEARNING_RATES, EPOCHES, IRIS_DIMS } from './const';
+import { LEARNING_RATES, EPOCHES, IRIS_DIMS, SPECIES } from './const';
 import './index.scss';
 
 const { Meta } = Card;
@@ -214,7 +214,7 @@ class Softmax extends Component {
       </Card>
       <Card className="modelLayer" title="Output" extra={<span>[{this.state.outputLayerSize}, {datasetSize}]</span>}>
         <div className="layerBlock">Description:</div>
-        <div className="layerBlock"></div>
+        <div className="layerBlock">A [{this.state.outputLayerSize}, {datasetSize}] matrix with 3 values(range from 0 to 1) in a column which the largest one represents the most likely species of one example</div>
       </Card>
     </div>
   )
@@ -265,6 +265,12 @@ class Softmax extends Component {
       title: 'Predict',
       dataIndex: 'predict',
       key: 'predict',
+      filters: map(SPECIES, val => ({
+        text: val,
+        value: val,
+      })),
+      filterMultiple: false,
+      onFilter: (value, record) => record.predict.indexOf(value) === 0,
     }];
     return (
       <Table
