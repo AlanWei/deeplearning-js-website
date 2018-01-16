@@ -201,7 +201,7 @@ class Logistic extends Component {
         <Select className="parameterSelect" defaultValue={this.state.hiddenLayerAct} disabled />
         <div className="divider" />
         <div className="layerBlock">Neurons:</div>
-        <InputNumber min={1} max={100} step={10} defaultValue={this.state.hiddenLayerSize} onChange={this.handleHiddenLayerSize} />
+        <InputNumber min={1} max={200} step={10} defaultValue={this.state.hiddenLayerSize} onChange={this.handleHiddenLayerSize} />
       </Card>
       <Card className="modelLayer" title="Output Layer" extra={<span>[{this.state.outputLayerSize}, {this.state.hiddenLayerSize}]</span>}>
         <div className="layerBlock">Activation function:</div>
