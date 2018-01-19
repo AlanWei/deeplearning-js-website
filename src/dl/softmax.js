@@ -42,7 +42,7 @@ function formatDataSet(dataset, isNormalized) {
   ).transpose();
 
   const matrix = map(input.matrix, subArray => (
-    isNormalized ? Normalization.zeroMeanNormalization(subArray) : subArray
+    isNormalized ? Normalization.zscore(subArray) : subArray
   ));
 
   return {

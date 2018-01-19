@@ -27,7 +27,7 @@ function formatDataSet(dataset, target, isNormalized) {
   ).transpose();
 
   const matrix = map(input.matrix, subArray => (
-    isNormalized ? Normalization.zeroMeanNormalization(subArray) : subArray
+    isNormalized ? Normalization.zscore(subArray) : subArray
   ));
 
   return {
@@ -69,6 +69,7 @@ function logistic(
   numOfIterations,
   isNormalized,
   hiddenLayerSize,
+  onCostCallback,
 ) {
   const trainSet = formatDataSet(iris, target, isNormalized);
   const initialParameters = initializeParameters([{
@@ -89,6 +90,7 @@ function logistic(
     learningRate,
     numOfIterations,
     10,
+    onCostCallback,
   );
 
   return {
