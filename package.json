@@ -54,7 +54,7 @@
         "antd": "^3.1.0",
         "axios": "^0.17.1",
         "classnames": "^2.2.5",
-        "deeplearning-js": "^0.3.10",
+        "deeplearning-js": "^0.4.0",
         "history": "^4.6.3",
         "lodash": "^4.17.4",
         "markdown-to-jsx": "^6.4.0",
