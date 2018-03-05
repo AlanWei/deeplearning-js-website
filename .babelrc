@@ -11,10 +11,6 @@
     "dynamic-import-webpack",
     ["module-resolver", {
       "root": ["./src"]
-    }],
-    ["import", {
-      "libraryName": "antd",
-      "style": "css"
     }]
   ],
   "env": {

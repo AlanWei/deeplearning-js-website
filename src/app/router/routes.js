@@ -1,23 +1,25 @@
+import loadable from 'react-loadable';
 import createAsyncThunk from 'utils/createAsyncThunk';
-import Home from '../../views/home';
-import Logistic from '../../views/demos/logistic';
-import Softmax from '../../views/demos/softmax';
-import API from '../../views/api';
+
+const AsyncHome = loadable({
+  loader: () => import('../../views/home'),
+  loading: () => null,
+});
+
+const AsyncUser = loadable({
+  loader: () => import('../../views/user'),
+  loading: () => null,
+});
 
 const routes = [{
   path: '/',
   exact: true,
-  component: Home,
+  component: AsyncHome,
   thunk: createAsyncThunk(() => import('../../views/home/thunk')),
 }, {
-  path: '/demos/logistic',
-  component: Logistic,
-}, {
-  path: '/demos/softmax',
-  component: Softmax,
-}, {
-  path: '/api',
-  component: API,
+  path: '/user',
+  component: AsyncUser,
+  thunk: createAsyncThunk(() => import('../../views/user/thunk')),
 }];
 
 export default routes;

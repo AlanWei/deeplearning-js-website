@@ -1,48 +1,54 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import action from './action';
 import logo from '../../assets/logo.svg';
+import action from './action';
+import homeAction from '../home/action';
 import './style.scss';
 
 const propTypes = {
   message: PropTypes.string.isRequired,
+  user: PropTypes.string.isRequired,
   getMessage: PropTypes.func.isRequired,
+  getUser: PropTypes.func.isRequired,
 };
 
-class Home extends Component {
+class User extends Component {
   componentDidMount() {
     this.props.getMessage();
+    this.props.getUser();
   }
 
   render() {
     return (
-      <div className="home">
+      <div className="user">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <p className="App-intro">
-          To get started, edit <code>src/views/home/index.js</code> and save to reload.
+          To get started, edit <code>src/views/user/index.js</code> and save to reload.
         </p>
-        <Link to="/user" href="/user">
-          <p className="App-intro">
-            {this.props.message}
-          </p>
-        </Link>
+        <p className="App-intro">
+          {this.props.message}
+        </p>
+        <p className="App-intro">
+          {this.props.user}
+        </p>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
+  user: state.user.user,
   message: state.home.message,
 });
 
 const mapDispatchToProps = {
-  getMessage: action.getMessage,
+  getUser: action.getUser,
+  getMessage: homeAction.getMessage,
 };
 
-Home.propTypes = propTypes;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+User.propTypes = propTypes;
+export default connect(mapStateToProps, mapDispatchToProps)(User);

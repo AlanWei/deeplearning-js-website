@@ -5,10 +5,9 @@ $ui-white-darken-3: #efefef !default;
 $ui-white-darken-4: #d8d8d8 !default;
 $ui-white-darken-5: #9b9b9b !default;
 
-$ui-primary: #002140 !default;
-
-$ui-black-darken: #0d1a26 !default;
-$ui-black: #314659 !default;
+$ui-black: #40485a !default;
+$ui-black-lighten: #5a6274 !default;
+$ui-black-darken: #272f41 !default;
 
 $ui-green: #3ac88e !default;
 $ui-green-lighten: #54e2a8 !default;
@@ -18,16 +17,15 @@ $ui-red: #ff4e4e !default;
 $ui-red-lighten: #ff6868 !default;
 $ui-red-darken: #e63535 !default;
 
-$ui-blue: #1890ff !default;
+$ui-blue: #286fdc !default;
+$ui-blue-lighten: #4289f6 !default;
+$ui-blue-darken: #0f56c3 !default;
 
 // Aliases
 $ui-text: $ui-black !default;
-$ui-text-title: $ui-black-darken !default;
+$ui-text-lighten: $ui-white-darken-5 !default;
 $ui-disabled: $ui-white-darken-4 !default;
 $ui-success: $ui-green !default;
 $ui-info: $ui-blue !default;
 $ui-primary: $ui-red !default;
 $ui-background: $ui-white-darken-2 !default;
-
-// others
-$ui-border: #e8e8e8;
