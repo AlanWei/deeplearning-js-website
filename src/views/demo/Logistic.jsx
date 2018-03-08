@@ -1,12 +1,25 @@
 import React, { Component } from 'react';
-import DemoContainer from './DemoContainer';
+import SiderLayout from '../../layouts/SiderLayout';
+
+const SIDER_ITEMS = [{
+  key: 'logistics',
+  link: '/demo',
+  text: 'Logistic regression',
+}, {
+  key: 'softmax',
+  link: '/demo/softmax',
+  text: 'Softmax classifier',
+}];
 
 class Logistics extends Component {
   render() {
     return (
-      <DemoContainer>
+      <SiderLayout
+        siderItems={SIDER_ITEMS}
+        currentSiderItemKey="logistics"
+      >
         Logistics
-      </DemoContainer>
+      </SiderLayout>
     );
   }
 }
