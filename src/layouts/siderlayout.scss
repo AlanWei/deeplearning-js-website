@@ -1,0 +1,19 @@
+@import "../styles/helpers";
+.siderLayout {
+  display: flex;
+  .siderLayoutSider {
+    flex: 1;
+    min-width: 224px;
+  }
+  .siderLayoutContent {
+    flex: 4;
+    border-left: 1px solid $ui-border;
+    margin-left: -1px;
+    @media screen and (max-width: 1281px) {
+      padding: 0 64px 40px 32px;
+    }
+    @media screen and (min-width: 1281px) {
+      padding: 0 170px 40px 64px;
+    }
+  }
+}
