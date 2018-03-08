@@ -31,6 +31,7 @@ class Home extends Component {
             {this.props.message}
           </p>
         </Link>
+        123
       </div>
     );
   }

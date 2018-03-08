@@ -1,0 +1,16 @@
+@import "../styles/helpers";
+.footer {
+  width: 100%;
+  padding: 0 4%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-direction: column;
+  height: 100px;
+  background-color: $ui-primary;
+  color: $ui-white;
+  border-top: 1px solid $ui-border;
+  .license {
+    margin-top: 4px;
+  }
+}
