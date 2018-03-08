@@ -1,49 +1,28 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import action from './action';
-import logo from '../../assets/logo.svg';
+import { Button } from 'antd';
 import './style.scss';
 
-const propTypes = {
-  message: PropTypes.string.isRequired,
-  getMessage: PropTypes.func.isRequired,
-};
-
 class Home extends Component {
-  componentDidMount() {
-    this.props.getMessage();
-  }
-
   render() {
     return (
       <div className="home">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/views/home/index.js</code> and save to reload.
-        </p>
-        <Link to="/user" href="/user">
-          <p className="App-intro">
-            {this.props.message}
-          </p>
-        </Link>
-        123
+        <div className="title">deeplearning-js</div>
+        <div className="desc">A Deep Learning Framework in JavaScript</div>
+        <div className="actions">
+          <Button className="btn" href="/api" type="primary" size="large">Get Started</Button>
+          <Button className="btn" href="/demos/logistic" size="large">Demos</Button>
+        </div>
+        <iframe
+          title="Github Star"
+          src="https://ghbtns.com/github-btn.html?user=AlanWei&repo=deeplearning-js&type=star&count=true&size=large"
+          frameBorder="0"
+          scrolling="0"
+          width="160px"
+          height="30px"
+        />
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  message: state.home.message,
-});
-
-const mapDispatchToProps = {
-  getMessage: action.getMessage,
-};
-
-Home.propTypes = propTypes;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;
