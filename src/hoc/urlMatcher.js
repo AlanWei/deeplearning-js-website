@@ -37,7 +37,7 @@ const urlMatcher = (WrappedCompoennt) => {
 
     setCurrent = (pathname) => {
       const current = pathname === '/' ?
-        'home' : URL_MAP[findMatch(pathname)];
+        'home' : URL_MAP[findMatch(pathname)] || '';
       this.setState({
         current,
       });

@@ -110,7 +110,7 @@ module.exports = {
       { from: 'favicon.ico' },
     ]),
     new HtmlWebpackPlugin({
-      title: 'React App',
+      title: 'deeplearning-js',
       filename: './index.html',
       template: './index.ejs',
     }),
