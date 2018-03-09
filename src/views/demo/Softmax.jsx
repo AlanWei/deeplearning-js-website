@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import SiderLayout from '../../layouts/SiderLayout';
 
 const SIDER_ITEMS = [{
-  key: 'logistics',
+  key: 'logistic',
   link: '/demo',
   text: 'Logistic regression',
 }, {
