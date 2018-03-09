@@ -10,7 +10,7 @@ class Home extends Component {
         <div className="desc">A Deep Learning Framework in JavaScript</div>
         <div className="actions">
           <Button className="btn" href="/api" type="primary" size="large">Get Started</Button>
-          <Button className="btn" href="/demos/logistic" size="large">Demos</Button>
+          <Button className="btn" href="/demo" size="large">Demos</Button>
         </div>
         <iframe
           title="Github Star"
