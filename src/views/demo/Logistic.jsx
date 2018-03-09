@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Select } from 'antd';
+import { Select, Card, Button, Icon, InputNumber } from 'antd';
 import map from 'lodash/map';
+import cloneDeep from 'lodash/cloneDeep';
+import pullAt from 'lodash/pullAt';
 import SiderLayout from '../../layouts/SiderLayout';
 import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS, NORMALIZATION_FUNCS } from './const';
+import irisDataset from '../../dl/data/iris';
 import './logistic.scss';
 
 const { Option } = Select;
@@ -24,10 +27,42 @@ class Logistic extends Component {
     epoch: 500,
     costFunc: 'cross-entropy',
     normalizationFunc: 'zscore',
-    hiddenLayerSize: 10,
-    hiddenLayerAct: 'relu',
-    outputLayerSize: 1,
-    outputLayerAct: 'sigmoid',
+    //
+    hiddenLayers: [],
+    currentHoverHiddenLayerIndex: -1,
+  }
+
+  handleAddLayer = () => {
+    const layers = cloneDeep(this.state.hiddenLayers);
+    layers.push({
+      size: 10,
+      activationFunc: 'relu',
+    });
+    this.setState({
+      hiddenLayers: layers,
+    });
+  }
+
+  handleMouseEnterHiddenLayer = (idx) => {
+    this.setState({
+      currentHoverHiddenLayerIndex: idx,
+    });
+  }
+
+  handleDeleteHiddenLayer = (idx) => {
+    const layers = cloneDeep(this.state.hiddenLayers);
+    pullAt(layers, idx);
+    this.setState({
+      hiddenLayers: layers,
+    });
+  }
+
+  handleChangeHiddenLayerSize = (size, idx) => {
+    const layers = cloneDeep(this.state.hiddenLayers);
+    layers[idx].size = size;
+    this.setState({
+      hiddenLayers: layers,
+    });
   }
 
   renderDataPanel = () => (
@@ -82,6 +117,105 @@ class Logistic extends Component {
     </div>
   )
 
+  renderHiddenLayers = () => (
+    map(this.state.hiddenLayers, (layer, idx) => (
+      <Card
+        onMouseEnter={() => this.handleMouseEnterHiddenLayer(idx)}
+        onMouseLeave={() => this.handleMouseEnterHiddenLayer(-1)}
+        key={idx}
+        className="panelItem layerCard"
+      >
+        {idx === this.state.currentHoverHiddenLayerIndex ?
+          <Icon
+            className="deleteBtn"
+            type="delete"
+            onClick={() => this.handleDeleteHiddenLayer(idx)}
+          />
+          :
+          null
+        }
+        <div className="panelItem"><strong>Hidden Layer {idx + 1}</strong></div>
+        <div className="panelItem">
+          <div className="selectLabel">Neurons</div>
+          <InputNumber
+            min={1}
+            max={100}
+            step={10}
+            defaultValue={10}
+            style={{ width: 100 }}
+            onChange={size => this.handleChangeHiddenLayerSize(size, idx)}
+          />
+        </div>
+        <div className="panelItem">
+          <div className="selectLabel">Activation Function</div>
+          <Select defaultValue={layer.activationFunc} style={{ width: 100 }} disabled />
+        </div>
+        <div className="layerShape">
+          [{layer.size}, {this.state.hiddenLayers[idx - 1] ?
+            this.state.hiddenLayers[idx - 1].size :
+            IRIS_DIMS
+          }]
+        </div>
+      </Card>
+    ))
+  )
+
+  renderOutputLayer = () => {
+    const outputLayerSize = this.state.hiddenLayers.length > 0 ?
+      this.state.hiddenLayers[this.state.hiddenLayers.length - 1].size :
+      IRIS_DIMS;
+    return (
+      <Card className="panelItem layerCard">
+        <div className="panelItem"><strong>Output Layer</strong></div>
+        <div className="panelItem">
+          <div className="selectLabel">Neurons</div>
+          <InputNumber
+            defaultValue={1}
+            style={{ width: 100 }}
+            disabled
+          />
+        </div>
+        <div className="panelItem">
+          <div className="selectLabel">Activation Function</div>
+          <Select defaultValue="sigmoid" style={{ width: 100 }} disabled />
+        </div>
+        <div className="layerShape">
+          [1, {outputLayerSize}]
+        </div>
+      </Card>
+    );
+  }
+
+  renderModelPanel = () => (
+    <div className="panel">
+      <div className="panelHeader">MODEL</div>
+      <div className="panelBody">
+        <Card className="panelItem layerCard">
+          <div className="panelItem"><strong>Input Data</strong></div>
+          <div className="layerShape">[{IRIS_DIMS}, {irisDataset.length}]</div>
+        </Card>
+        {this.renderHiddenLayers()}
+        <Button
+          className="panelItem"
+          style={{ width: 100 }}
+          type="primary"
+          onClick={this.handleAddLayer}
+        >
+          ADD
+        </Button>
+        {this.renderOutputLayer()}
+      </div>
+    </div>
+  )
+
+  renderResultPanel = () => (
+    <div className="panel">
+      <div className="panelHeader">RESULT</div>
+      <div className="panelBody">
+      </div>
+    </div>
+  )
+
   render() {
     return (
       <SiderLayout
@@ -90,12 +224,8 @@ class Logistic extends Component {
         currentSiderItemKey="logistic"
       >
         {this.renderDataPanel()}
-        <div className="panel">
-          <div className="panelHeader">MODEL</div>
-        </div>
-        <div className="panel">
-          <div className="panelHeader">RESULT</div>
-        </div>
+        {this.renderModelPanel()}
+        {this.renderResultPanel()}
       </SiderLayout>
     );
   }

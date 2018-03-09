@@ -32,6 +32,24 @@
         font-weight: bold;
         margin: 20px 0 12px 0;
       }
+      .layerCard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 120px;
+      }
+      .layerShape {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        font-size: 12px;
+      }
+      .deleteBtn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        color: $ui-red;
+      }
     }
   }
 }
