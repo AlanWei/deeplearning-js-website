@@ -9,7 +9,7 @@ const path = require('path');
 const ENV = process.env.NODE_ENV || 'development';
 
 const SOURCE_DIR = path.resolve(__dirname, 'src');
-const OUTPUT_DIR = path.resolve(__dirname, 'build');
+const OUTPUT_DIR = path.resolve(__dirname, 'dl-js');
 
 module.exports = {
   context: SOURCE_DIR,
@@ -22,8 +22,8 @@ module.exports = {
       'redux',
       'react-redux',
       'redux-thunk',
-      'reselect',
-      'axios',
+      'deeplearning-js',
+      'bizcharts',
     ],
     client: './index.js',
   },
