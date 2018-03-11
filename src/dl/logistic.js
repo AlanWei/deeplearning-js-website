@@ -2,7 +2,7 @@ import { map, omit, pick, values } from 'lodash';
 import {
   initializeParameters,
   forwardPropagation,
-  train,
+  batchTrain,
   Normalization,
   transpose,
 } from 'deeplearning-js';
@@ -35,28 +35,35 @@ function predict(
   input,
   output,
   parameters,
-  datasetType,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
   const predictSet = formatNumToBool(forward[0]);
   const correctSet = formatNumToBool(output[0]);
-  let correctCount = 0;
+
+  const rightSet = [];
+  const wrongSet = [];
   map(predictSet, (num, idx) => {
     if (num === correctSet[idx]) {
-      correctCount += 1;
+      rightSet.push(idx);
+    } else {
+      wrongSet.push(idx);
     }
   });
 
-  console.log(`${datasetType} set accuracy: ${(correctCount / correctSet.length) * 100}%`);
-  console.log(`${datasetType} set correct count: ${correctCount}`);
+  return {
+    rightSet,
+    wrongSet,
+  };
 }
 
-export default function logistic(
+function logistic(
   target,
   hiddenLayers,
   learningRate,
   numOfIterations,
-  costFunction,
+  onBatchTrainEnd,
+  onTrainEnd,
+  batchSize = 50,
 ) {
   const trainSet = formatDataSet(iris, target);
 
@@ -71,21 +78,26 @@ export default function logistic(
 
   const initialParameters = initializeParameters(model, 0, 1, 0.01);
 
-  const { parameters, costs } = train(
+  batchTrain(
+    0,
+    numOfIterations / batchSize,
+    batchSize,
     trainSet.input,
     trainSet.output,
     initialParameters,
-    costFunction,
     learningRate,
-    numOfIterations,
-    10,
-    true,
+    'cross-entropy',
+    onBatchTrainEnd,
+    onTrainEnd,
   );
-
-  return {
-    parameters,
-    costs,
-  };
-
-  // predict(trainSet.input, trainSet.output, parameters, 'train');
 }
+
+function getTrainSet(target) {
+  return formatDataSet(iris, target);
+}
+
+export {
+  logistic,
+  predict,
+  getTrainSet,
+};

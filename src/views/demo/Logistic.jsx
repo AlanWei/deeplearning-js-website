@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Select, Card, Button, Icon, InputNumber } from 'antd';
+import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import pullAt from 'lodash/pullAt';
 import SiderLayout from '../../layouts/SiderLayout';
 import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS, NORMALIZATION_FUNCS } from './const';
 import irisDataset from '../../dl/data/iris';
-import logistic from '../../dl/logistic';
+import { logistic, predict, getTrainSet } from '../../dl/logistic';
 import './logistic.scss';
 
 const { Option } = Select;
@@ -31,6 +32,13 @@ class Logistic extends Component {
     //
     hiddenLayers: [],
     currentHoverHiddenLayerIndex: -1,
+    //
+    isTraining: false,
+    currentEpoch: 0,
+    //
+    rightSet: [],
+    wrongSet: [],
+    costs: [],
   }
 
   handleAddLayer = () => {
@@ -66,15 +74,44 @@ class Logistic extends Component {
     });
   }
 
+  updateInProgress = (ro, idx) => {
+    this.setState({
+      currentEpoch: idx,
+      costs: map(ro.costs, (cost, i) => ({
+        epoch: i + 1,
+        cost,
+      })),
+    });
+  }
+
+  handleTrainEnd = (ro) => {
+    this.setState({
+      isTraining: false,
+    });
+    const data = getTrainSet(this.state.targetSpecies);
+    const { rightSet, wrongSet } = predict(data.input, data.output, ro.parameters);
+    this.setState({
+      rightSet,
+      wrongSet,
+      costs: map(ro.costs, (cost, idx) => ({
+        epoch: idx + 1,
+        cost,
+      })),
+    });
+  }
+
   handleTrainingStart = () => {
-    const { costs } = logistic(
+    this.setState({
+      isTraining: true,
+    });
+    logistic(
       this.state.targetSpecies,
       this.state.hiddenLayers,
       this.state.learningRate,
       this.state.epoch,
-      this.state.costFunc,
+      this.updateInProgress,
+      this.handleTrainEnd,
     );
-    console.log(costs);
   }
 
   handleSelectChange = (value, type) => {
@@ -83,20 +120,49 @@ class Logistic extends Component {
     });
   }
 
+  handleResetModel = () => {
+    this.setState({
+      targetSpecies: 'setosa',
+      learningRate: 0.003,
+      epoch: 500,
+      costFunc: 'cross-entropy',
+      normalizationFunc: 'zscore',
+      //
+      hiddenLayers: [],
+      currentHoverHiddenLayerIndex: -1,
+      //
+      isTraining: false,
+      currentEpoch: 0,
+    });
+  }
+
   renderControlPanel = () => (
     <div className="controlPanel">
+      <Icon
+        className="resetBtn"
+        type="reload"
+        onClick={this.handleResetModel}
+      />
       <div
-        className="startBtn"
+        className="startBtn controlPanelItem"
         role="presentation"
         onClick={this.handleTrainingStart}
       >
-        <Icon type="caret-right" />
+        {this.state.isTraining ?
+          <Icon type="loading" />
+          :
+          <Icon type="caret-right" />
+        }
       </div>
-      <div>
+      <div className="controlPanelItem">
         <div className="selectLabel"><strong>Dataset</strong></div>
         <Select defaultValue="iris" style={{ width: 200 }} disabled>
           <Option value="iris">Iris</Option>
         </Select>
+      </div>
+      <div className="controlPanelItem">
+        <div className="selectLabel"><strong>Epoch</strong></div>
+        <div>{this.state.currentEpoch}</div>
       </div>
     </div>
   )
@@ -109,7 +175,7 @@ class Logistic extends Component {
         <div className="panelItem">
           <div className="selectLabel">Target Species</div>
           <Select
-            defaultValue={this.state.targetSpecies}
+            value={this.state.targetSpecies}
             style={{ width: 200 }}
             onChange={value => this.handleSelectChange(value, 'targetSpecies')}
           >
@@ -121,7 +187,7 @@ class Logistic extends Component {
         <div className="panelItem">
           <div className="selectLabel">Learning Rate</div>
           <Select
-            defaultValue={this.state.learningRate}
+            value={this.state.learningRate}
             style={{ width: 200 }}
             onChange={value => this.handleSelectChange(value, 'learningRate')}
           >
@@ -133,7 +199,7 @@ class Logistic extends Component {
         <div className="panelItem">
           <div className="selectLabel">Epoch</div>
           <Select
-            defaultValue={this.state.epoch}
+            value={this.state.epoch}
             style={{ width: 200 }}
             onChange={value => this.handleSelectChange(value, 'epoch')}
           >
@@ -253,7 +319,30 @@ class Logistic extends Component {
   renderResultPanel = () => (
     <div className="panel">
       <div className="panelHeader">RESULT</div>
-      <div className="panelBody" />
+      <div className="panelBody">
+        <div className="panelItem">
+          <div className="selectLabel"><strong>Total Count</strong></div>
+          <div>{irisDataset.length}</div>
+        </div>
+        <div className="panelItem">
+          <div className="selectLabel"><strong>Correct Count</strong></div>
+          <div>{this.state.rightSet.length}</div>
+        </div>
+        <div className="panelItem">
+          <div className="selectLabel"><strong>Wrong Count</strong></div>
+          <div>{this.state.wrongSet.length}</div>
+        </div>
+        <div className="panelItem">
+          <div className="selectLabel"><strong>Wrong Sample Index</strong></div>
+          <div>{map(this.state.wrongSet, (idx, i) => (
+            i === this.state.wrongSet.length - 1 ?
+              <span key={i}>{idx}</span>
+            :
+              <span key={i}>{idx}, </span>
+          ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 
@@ -269,6 +358,15 @@ class Logistic extends Component {
           {this.renderDataPanel()}
           {this.renderModelPanel()}
           {this.renderResultPanel()}
+        </div>
+        <div className="costPanel">
+          <Chart height={400} data={this.state.costs} forceFit>
+            <Axis name="epoch" />
+            <Axis name="cost" />
+            <Tooltip crosshairs={{ type: 'y' }} />
+            <Geom type="line" position="epoch*cost" size={2} />
+            <Geom type="point" position="epoch*cost" size={4} shape="circle" style={{ stroke: '#fff', lineWidth: 1 }} />
+          </Chart>
         </div>
       </SiderLayout>
     );

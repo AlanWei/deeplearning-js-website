@@ -5,21 +5,31 @@
       display: flex;
       align-items: center;
       border: 1px solid $ui-border;
-      padding: 24px 12px;
+      padding: 24px 48px;
       margin-bottom: 12px;
+      .controlPanelItem {
+        margin-right: 48px;
+      }
+      .resetBtn {
+        font-size: 20px;
+        margin-right: 24px;
+        color: $ui-primary;
+        &:hover {
+          cursor: pointer;
+        }
+      }
       .startBtn {
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background: $ui-blue;
+        background: $ui-primary;
         height: 48px;
         width: 48px;
-        margin-right: 12px;
         &:hover {
           cursor: pointer;
         }
-        .anticon-caret-right {
+        .anticon {
           font-size: 20px;
           color: $ui-white;
         }
@@ -27,6 +37,7 @@
     }
     .modelPanel {
       display: flex;
+      margin-bottom: 12px;
       .panel {
         flex: 1;
         border: 1px solid $ui-border;
@@ -79,6 +90,9 @@
     }
     .selectLabel {
       margin-bottom: 4px;
+    }
+    .costPanel {
+      border: 1px solid $ui-border;
     }
   }
 }

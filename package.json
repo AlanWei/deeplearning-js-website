@@ -53,8 +53,9 @@
   "dependencies": {
     "antd": "^3.2.3",
     "axios": "^0.18.0",
+    "bizcharts": "^3.1.4-beta.2",
     "classnames": "^2.2.5",
-    "deeplearning-js": "0.5.0-rc.1",
+    "deeplearning-js": "0.5.0-rc.2",
     "history": "^4.6.3",
     "lodash": "^4.17.5",
     "markdown-to-jsx": "^6.5.0",
