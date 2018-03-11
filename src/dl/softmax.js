@@ -1,24 +1,22 @@
-import { map, omit, pick, values, indexOf, max, isEmpty } from 'lodash';
+import { map, omit, pick, values, indexOf, max } from 'lodash';
 import {
-  Array2D,
   initializeParameters,
   forwardPropagation,
-  train,
+  batchTrain,
   Normalization,
-  convertArray2DToArray1D,
+  transpose,
 } from 'deeplearning-js';
-import irisTrain from './data/iris.train';
-import irisTest from './data/iris.test';
+import * as irisTrain from './data/iris.train';
+import * as irisTest from './data/iris.test';
 
-function formatDataSet(dataset, isNormalized) {
-  const datasetSize = dataset.length;
-  let inputValues = [];
-  let outputValues = [];
+function formatDataSet(dataset) {
+  const inputValues = [];
+  const outputValues = [];
 
-  map(dataset, (example) => {
+  map(dataset, (example, idx) => {
     const input = omit(example, 'species');
     const output = pick(example, 'species');
-    inputValues = inputValues.concat(values(input));
+    inputValues[idx] = values(input);
     let result = [1, 0, 0];
     switch (output.species) {
       case 'setosa':
@@ -33,30 +31,14 @@ function formatDataSet(dataset, isNormalized) {
       default:
         break;
     }
-    outputValues = outputValues.concat(result);
+    outputValues[idx] = result;
   });
 
-  const input = new Array2D(
-    [datasetSize, inputValues.length / datasetSize],
-    inputValues,
-  ).transpose();
-
-  const matrix = map(input.matrix, subArray => (
-    isNormalized ? Normalization.zscore(subArray) : subArray
-  ));
-
   return {
-    input: new Array2D(
-      [inputValues.length / datasetSize, datasetSize],
-      convertArray2DToArray1D(
-        [inputValues.length / datasetSize, datasetSize],
-        matrix,
-      ),
-    ),
-    output: new Array2D(
-      [datasetSize, outputValues.length / datasetSize],
-      outputValues,
-    ).transpose(),
+    input: map(transpose(inputValues), subArray => (
+      Normalization.zscore(subArray)
+    )),
+    output: transpose(outputValues),
   };
 }
 
@@ -64,70 +46,92 @@ function predict(
   input,
   output,
   parameters,
+  step,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
-  if (isEmpty(forward)) {
-    return map(output, () => (''));
-  }
-  const transform = map(forward.transpose().matrix, (subArray) => {
+  const transform = map(transpose(forward), (subArray) => {
     const maxIdx = indexOf(subArray, max(subArray));
-    switch (maxIdx) {
-      case 0:
-        return 'setosa';
-      case 1:
-        return 'versicolor';
-      case 2:
-        return 'virginica';
-      default:
-        return '';
+    return map(subArray, (num, idx) => (idx === maxIdx ? 1 : 0));
+  });
+  const predictSet = transpose(transform);
+
+  const correctCount = [];
+  const correctCount1 = [];
+  const correctCount2 = [];
+  const correctCount3 = [];
+  let totalCount = 0;
+  map(transpose(predictSet), (subArray, idx) => {
+    const correctSubArr = transpose(output)[idx];
+    const maxIdx = indexOf(subArray, max(subArray));
+    const correctMaxIdx = indexOf(correctSubArr, max(correctSubArr));
+    if (maxIdx === correctMaxIdx) {
+      if (idx < step) {
+        correctCount1.push(idx);
+      } else if (idx >= step && idx < step * 2) {
+        correctCount2.push(idx);
+      } else {
+        correctCount3.push(idx);
+      }
+      correctCount.push(idx);
     }
+    totalCount += 1;
   });
 
-  return transform;
+  return {
+    totalCount,
+    correct: correctCount,
+    setosa: correctCount1,
+    versicolor: correctCount2,
+    virginica: correctCount3,
+  };
 }
 
-function softmax(
+export default function softmax(
+  hiddenLayers,
   learningRate,
   numOfIterations,
-  isNormalized,
-  hiddenLayerSize,
-  errCallback,
+  onBatchTrainEnd,
+  onTrainEnd,
+  batchSize = 10,
 ) {
-  const trainSet = formatDataSet(irisTrain, isNormalized);
-  const testSet = formatDataSet(irisTest, isNormalized);
+  const trainSet = formatDataSet(irisTrain);
 
-  const initialParameters = initializeParameters([{
-    size: trainSet.input.shape[0],
-  }, {
-    size: hiddenLayerSize,
-    activationFunc: 'relu',
-  }, {
-    size: trainSet.output.shape[0],
+  const inputLayer = [{
+    size: trainSet.input.length,
+  }];
+  const outputLayer = [{
+    size: 3,
     activationFunc: 'softmax',
-  }], 0, 1, 0.01);
+  }];
+  const model = inputLayer.concat(hiddenLayers).concat(outputLayer);
 
-  try {
-    const { parameters, costs } = train(
-      trainSet.input,
-      trainSet.output,
-      initialParameters,
-      'cross-entropy',
-      learningRate,
-      numOfIterations,
-      10,
-    );
+  const initialParameters = initializeParameters(model);
 
-    return {
-      testSet,
-      parameters,
-      costs,
-    };
-  } catch (err) {
-    return errCallback(err);
-  }
+  batchTrain(
+    0,
+    numOfIterations / batchSize,
+    batchSize,
+    trainSet.input,
+    trainSet.output,
+    initialParameters,
+    learningRate,
+    'cross-entropy',
+    onBatchTrainEnd,
+    onTrainEnd,
+  );
+}
+
+function getTrainSet() {
+  return formatDataSet(irisTrain);
+}
+
+function getTestSet() {
+  return formatDataSet(irisTest);
 }
 
 export {
   softmax,
   predict,
+  getTrainSet,
+  getTestSet,
 };

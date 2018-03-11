@@ -1,52 +1,34 @@
 import { map, omit, pick, values } from 'lodash';
 import {
-  Array2D,
-  Normalization,
-  convertArray2DToArray1D,
   initializeParameters,
   forwardPropagation,
-  train,
+  batchTrain,
+  Normalization,
+  transpose,
 } from 'deeplearning-js';
-import iris from './data/iris';
+import * as iris from './data/iris';
 
-function formatDataSet(dataset, target, isNormalized) {
-  const datasetSize = dataset.length;
-  let inputValues = [];
-  let outputValues = [];
+function formatDataSet(dataset, target) {
+  const inputValues: number[][] = [];
+  const outputValues: number[][] = [];
 
-  map(dataset, (example) => {
+  map(dataset, (example, idx) => {
     const input = omit(example, 'species');
     const output = pick(example, 'species');
-    inputValues = inputValues.concat(values(input));
-    outputValues = outputValues.concat(output.species === target ? 1 : 0);
+    inputValues[idx] = values(input);
+    outputValues[idx] = [output.species === target ? 1 : 0];
   });
 
-  const input = new Array2D(
-    [datasetSize, inputValues.length / datasetSize],
-    inputValues,
-  ).transpose();
-
-  const matrix = map(input.matrix, subArray => (
-    isNormalized ? Normalization.zscore(subArray) : subArray
-  ));
-
   return {
-    input: new Array2D(
-      [inputValues.length / datasetSize, datasetSize],
-      convertArray2DToArray1D(
-        [inputValues.length / datasetSize, datasetSize],
-        matrix,
-      ),
-    ),
-    output: new Array2D(
-      [outputValues.length / datasetSize, datasetSize],
-      outputValues,
-    ),
+    input: map(transpose(inputValues), subArray => (
+      Normalization.zscore(subArray)
+    )),
+    output: transpose(outputValues),
   };
 }
 
 function formatNumToBool(output) {
-  return map(output.values, num => (num > 0.5 ? 1 : 0));
+  return map(output, num => (num > 0.5 ? 1 : 0));
 }
 
 function predict(
@@ -55,52 +37,67 @@ function predict(
   parameters,
 ) {
   const forward = forwardPropagation(input, parameters).yHat;
-  const predictSet = formatNumToBool(forward);
-  const correctSet = formatNumToBool(output);
+  const predictSet = formatNumToBool(forward[0]);
+  const correctSet = formatNumToBool(output[0]);
+
+  const rightSet = [];
+  const wrongSet = [];
+  map(predictSet, (num, idx) => {
+    if (num === correctSet[idx]) {
+      rightSet.push(idx);
+    } else {
+      wrongSet.push(idx);
+    }
+  });
+
   return {
-    predictSet,
-    correctSet,
+    rightSet,
+    wrongSet,
   };
 }
 
 function logistic(
   target,
+  hiddenLayers,
   learningRate,
   numOfIterations,
-  isNormalized,
-  hiddenLayerSize,
-  onCostCallback,
+  onBatchTrainEnd,
+  onTrainEnd,
+  batchSize = 10,
 ) {
-  const trainSet = formatDataSet(iris, target, isNormalized);
-  const initialParameters = initializeParameters([{
-    size: trainSet.input.shape[0],
-  }, {
-    size: hiddenLayerSize,
-    activationFunc: 'relu',
-  }, {
-    size: trainSet.output.shape[0],
-    activationFunc: 'sigmoid',
-  }], 0, 1, 0.01);
+  const trainSet = formatDataSet(iris, target);
 
-  const { parameters, costs } = train(
+  const inputLayer = [{
+    size: trainSet.input.length,
+  }];
+  const outputLayer = [{
+    size: trainSet.output.length,
+    activationFunc: 'sigmoid',
+  }];
+  const model = inputLayer.concat(hiddenLayers).concat(outputLayer);
+
+  const initialParameters = initializeParameters(model);
+
+  batchTrain(
+    0,
+    numOfIterations / batchSize,
+    batchSize,
     trainSet.input,
     trainSet.output,
     initialParameters,
-    'cross-entropy',
     learningRate,
-    numOfIterations,
-    10,
-    onCostCallback,
+    'cross-entropy',
+    onBatchTrainEnd,
+    onTrainEnd,
   );
+}
 
-  return {
-    trainSet,
-    parameters,
-    costs,
-  };
+function getTrainSet(target) {
+  return formatDataSet(iris, target);
 }
 
 export {
   logistic,
   predict,
+  getTrainSet,
 };

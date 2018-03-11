@@ -3,6 +3,7 @@ const EPOCHES = [100, 200, 500, 1000, 2000, 5000, 10000];
 const ACTIVATION_FUNCS = ['relu', 'sigmoid', 'softmax'];
 const SPECIES = ['setosa', 'versicolor', 'virginica'];
 const IRIS_DIMS = 4;
+const NORMALIZATION_FUNCS = ['zscore', 'minmax'];
 
 export {
   LEARNING_RATES,
@@ -10,4 +11,5 @@ export {
   ACTIVATION_FUNCS,
   SPECIES,
   IRIS_DIMS,
+  NORMALIZATION_FUNCS,
 };

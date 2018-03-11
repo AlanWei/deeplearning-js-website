@@ -1,43 +1,28 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Button } from 'antd';
-import Header from '../header';
-import Content from '../content';
-import Footer from '../footer';
-import Github from './Github';
-import './index.scss';
-
-const propTypes = {
-};
+import './style.scss';
 
 class Home extends Component {
   render() {
     return (
-      <div className="pageRoot">
-        <Header current="home" />
-        <Content>
-          <div className="home">
-            <div className="title">deeplearning-js</div>
-            <div className="desc">A Deep Learning Framework in JavaScript</div>
-            <div className="actions">
-              <Button className="btn" href="/api" type="primary" size="large">Get Started</Button>
-              <Button className="btn" href="/demos/logistic" size="large">Demos</Button>
-            </div>
-            <Github />
-          </div>
-        </Content>
-        <Footer />
+      <div className="home">
+        <div className="title">deeplearning-js</div>
+        <div className="desc">A Deep Learning Framework in JavaScript</div>
+        <div className="actions">
+          <Button className="btn" href="/api" type="primary" size="large">Get Started</Button>
+          <Button className="btn" href="/demo" size="large">Demos</Button>
+        </div>
+        <iframe
+          title="Github Star"
+          src="https://ghbtns.com/github-btn.html?user=AlanWei&repo=deeplearning-js&type=star&count=true&size=large"
+          frameBorder="0"
+          scrolling="0"
+          width="160px"
+          height="30px"
+        />
       </div>
     );
   }
 }
 
-const mapStateToProps = () => ({
-});
-
-const mapDispatchToProps = {
-};
-
-Home.propTypes = propTypes;
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

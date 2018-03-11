@@ -1,0 +1,110 @@
+@import '../../styles/helpers';
+.demo {
+  .siderLayoutContent {
+    .pageIntro {
+      margin-bottom: 20px;
+      .pageTitle {
+        font-size: 30px;
+        font-weight: bold;
+        margin: 8px 0 20px 0;
+      }
+    }
+    .controlPanel {
+      display: flex;
+      align-items: center;
+      border: 1px solid $ui-border;
+      padding: 24px 48px;
+      margin-bottom: 12px;
+      .controlPanelItem {
+        margin-right: 48px;
+      }
+      .resetBtn {
+        font-size: 20px;
+        margin-right: 24px;
+        color: $ui-primary;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      .startBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: $ui-primary;
+        height: 48px;
+        width: 48px;
+        &:hover {
+          cursor: pointer;
+        }
+        .anticon {
+          font-size: 20px;
+          color: $ui-white;
+        }
+      }
+    }
+    .modelPanel {
+      display: flex;
+      margin-bottom: 12px;
+      .panel {
+        flex: 1;
+        border: 1px solid $ui-border;
+        border-right: none;
+        &:last-child {
+          border-right: 1px solid $ui-border;
+        }
+        .panelHeader {
+          display: flex;
+          align-items: center;
+          padding: 6px 12px;
+          font-weight: bold;
+          font-size: 16px;
+          height: 60px;
+          border-bottom: 1px solid $ui-border;
+        }
+        .panelBody {
+          padding: 12px;
+        }
+        .panelItem {
+          margin-bottom: 12px;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        .layerCard {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 120px;
+        }
+        .layerShape {
+          position: absolute;
+          bottom: 12px;
+          left: 12px;
+          font-size: 12px;
+        }
+        .deleteBtn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          color: $ui-red;
+        }
+      }
+    }
+    .costPanel {
+      padding: 12px;
+      border: 1px solid $ui-border;
+    }
+    .selectLabel {
+      margin-bottom: 4px;
+    }
+    .sectionTitle {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 20px 0 12px 0;
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+  }
+}

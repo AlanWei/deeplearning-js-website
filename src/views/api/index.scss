@@ -1,25 +1,8 @@
-@import "../../styles/helpers";
-
+@import '../../styles/helpers';
 .api {
-  display: flex;
-  padding-top: 40px;
-  .sider {
+  .apiSider {
     flex: 1;
     min-width: 224px;
-    .menuItem {
-      font-weight: 500;
-    }
-  }
-  .pageContent {
-    flex: 4;
-    border-left: 1px solid $ui-border;
-    margin-left: -1px;
-    @media screen and (max-width: 1281px) {
-      padding: 0 64px 40px 32px;
-    }
-    @media screen and (min-width: 1281px) {
-      padding: 0 170px 40px 64px;
-    }
   }
   h2 {
     font-size: 1.5em;
