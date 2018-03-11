@@ -134,6 +134,10 @@ class Logistic extends Component {
       //
       isTraining: false,
       currentEpoch: 0,
+      //
+      rightSet: [],
+      wrongSet: [],
+      costs: [],
     });
   }
 

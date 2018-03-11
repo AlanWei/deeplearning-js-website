@@ -145,6 +145,22 @@ class Softmax extends Component {
       //
       isTraining: false,
       currentEpoch: 0,
+      //
+      trainSetResult: {
+        totalCount: 0,
+        correct: [],
+        setosa: [],
+        versicolor: [],
+        virginica: [],
+      },
+      testSetResult: {
+        totalCount: 0,
+        correct: [],
+        setosa: [],
+        versicolor: [],
+        virginica: [],
+      },
+      costs: [],
     });
   }
 
