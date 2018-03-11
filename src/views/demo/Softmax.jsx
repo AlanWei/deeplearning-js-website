@@ -301,7 +301,7 @@ class Softmax extends Component {
         </div>
         <div className="panelItem">
           <div className="selectLabel">Activation Function</div>
-          <Select defaultValue="sigmoid" style={{ width: 100 }} disabled />
+          <Select defaultValue="softmax" style={{ width: 100 }} disabled />
         </div>
         <div className="layerShape">
           [3, {outputLayerSize}]
