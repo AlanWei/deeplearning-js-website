@@ -1,6 +1,14 @@
 @import '../../styles/helpers';
-.logistic {
+.demo {
   .siderLayoutContent {
+    .pageIntro {
+      margin-bottom: 20px;
+      .pageTitle {
+        font-size: 30px;
+        font-weight: bold;
+        margin: 8px 0 20px 0;
+      }
+    }
     .controlPanel {
       display: flex;
       align-items: center;
@@ -59,13 +67,8 @@
         }
         .panelItem {
           margin-bottom: 12px;
-        }
-        .sectionTitle {
-          font-size: 16px;
-          font-weight: bold;
-          margin: 20px 0 12px 0;
-          &:first-child {
-            margin-top: 0;
+          &:last-child {
+            margin-bottom: 0;
           }
         }
         .layerCard {
@@ -88,11 +91,20 @@
         }
       }
     }
+    .costPanel {
+      padding: 12px;
+      border: 1px solid $ui-border;
+    }
     .selectLabel {
       margin-bottom: 4px;
     }
-    .costPanel {
-      border: 1px solid $ui-border;
+    .sectionTitle {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 20px 0 12px 0;
+      &:first-child {
+        margin-top: 0;
+      }
     }
   }
 }

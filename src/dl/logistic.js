@@ -63,7 +63,7 @@ function logistic(
   numOfIterations,
   onBatchTrainEnd,
   onTrainEnd,
-  batchSize = 50,
+  batchSize = 10,
 ) {
   const trainSet = formatDataSet(iris, target);
 
@@ -76,7 +76,7 @@ function logistic(
   }];
   const model = inputLayer.concat(hiddenLayers).concat(outputLayer);
 
-  const initialParameters = initializeParameters(model, 0, 1, 0.01);
+  const initialParameters = initializeParameters(model);
 
   batchTrain(
     0,

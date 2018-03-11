@@ -4,11 +4,12 @@ import { Chart, Axis, Geom, Tooltip } from 'bizcharts';
 import map from 'lodash/map';
 import cloneDeep from 'lodash/cloneDeep';
 import pullAt from 'lodash/pullAt';
+import filter from 'lodash/filter';
 import SiderLayout from '../../layouts/SiderLayout';
 import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS, NORMALIZATION_FUNCS } from './const';
 import irisDataset from '../../dl/data/iris';
 import { logistic, predict, getTrainSet } from '../../dl/logistic';
-import './logistic.scss';
+import './demo.scss';
 
 const { Option } = Select;
 
@@ -77,10 +78,10 @@ class Logistic extends Component {
   updateInProgress = (ro, idx) => {
     this.setState({
       currentEpoch: idx,
-      costs: map(ro.costs, (cost, i) => ({
+      costs: filter(map(ro.costs, (cost, i) => ({
         epoch: i + 1,
         cost,
-      })),
+      })), (obj, i) => ((i + 1) % 10 === 0)),
     });
   }
 
@@ -93,10 +94,10 @@ class Logistic extends Component {
     this.setState({
       rightSet,
       wrongSet,
-      costs: map(ro.costs, (cost, idx) => ({
+      costs: filter(map(ro.costs, (cost, idx) => ({
         epoch: idx + 1,
         cost,
-      })),
+      })), (obj, idx) => ((idx + 1) % 10 === 0)),
     });
   }
 
@@ -321,19 +322,19 @@ class Logistic extends Component {
       <div className="panelHeader">RESULT</div>
       <div className="panelBody">
         <div className="panelItem">
-          <div className="selectLabel"><strong>Total Count</strong></div>
+          <div className="selectLabel"><strong>Total count</strong></div>
           <div>{irisDataset.length}</div>
         </div>
         <div className="panelItem">
-          <div className="selectLabel"><strong>Correct Count</strong></div>
+          <div className="selectLabel"><strong>Correct count</strong></div>
           <div>{this.state.rightSet.length}</div>
         </div>
         <div className="panelItem">
-          <div className="selectLabel"><strong>Wrong Count</strong></div>
+          <div className="selectLabel"><strong>Wrong count</strong></div>
           <div>{this.state.wrongSet.length}</div>
         </div>
         <div className="panelItem">
-          <div className="selectLabel"><strong>Wrong Sample Index</strong></div>
+          <div className="selectLabel"><strong>Wrong sample index</strong></div>
           <div>{map(this.state.wrongSet, (idx, i) => (
             i === this.state.wrongSet.length - 1 ?
               <span key={i}>{idx}</span>
@@ -349,10 +350,14 @@ class Logistic extends Component {
   render() {
     return (
       <SiderLayout
-        className="logistic"
+        className="demo"
         siderItems={SIDER_ITEMS}
         currentSiderItemKey="logistic"
       >
+        <div className="pageIntro">
+          <div className="pageTitle">Logistic regression</div>
+          <div className="pageDesc"><strong>Logistic regression</strong> is a statistical method for analyzing a dataset in which there are one or more independent variables that determine an outcome. The outcome is measured with a dichotomous variable (in which there are only two possible outcomes).</div>
+        </div>
         {this.renderControlPanel()}
         <div className="modelPanel">
           {this.renderDataPanel()}
@@ -360,7 +365,8 @@ class Logistic extends Component {
           {this.renderResultPanel()}
         </div>
         <div className="costPanel">
-          <Chart height={400} data={this.state.costs} forceFit>
+          <div className="sectionTitle">Cost Graph</div>
+          <Chart height={400} data={this.state.costs} scale={{ cost: { min: 0 } }} forceFit>
             <Axis name="epoch" />
             <Axis name="cost" />
             <Tooltip crosshairs={{ type: 'y' }} />
