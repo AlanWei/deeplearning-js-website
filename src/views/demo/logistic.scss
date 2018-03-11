@@ -1,55 +1,84 @@
 @import '../../styles/helpers';
 .logistic {
   .siderLayoutContent {
-    display: flex;
-    .panel {
-      flex: 1;
+    .controlPanel {
+      display: flex;
+      align-items: center;
       border: 1px solid $ui-border;
-      border-right: none;
-      &:last-child {
-        border-right: 1px solid $ui-border;
-      }
-      .panelHeader {
-        display: flex;
-        align-items: center;
-        padding: 6px 12px;
-        font-weight: bold;
-        font-size: 16px;
-        height: 60px;
-        border-bottom: 1px solid $ui-border;
-      }
-      .panelBody {
-        padding: 12px;
-      }
-      .panelItem {
-        margin-bottom: 12px;
-      }
-      .selectLabel {
-        margin-bottom: 4px;
-      }
-      .sectionTitle {
-        font-size: 16px;
-        font-weight: bold;
-        margin: 20px 0 12px 0;
-      }
-      .layerCard {
+      padding: 24px 12px;
+      margin-bottom: 12px;
+      .startBtn {
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 120px;
+        border-radius: 50%;
+        background: $ui-blue;
+        height: 48px;
+        width: 48px;
+        margin-right: 12px;
+        &:hover {
+          cursor: pointer;
+        }
+        .anticon-caret-right {
+          font-size: 20px;
+          color: $ui-white;
+        }
       }
-      .layerShape {
-        position: absolute;
-        bottom: 12px;
-        left: 12px;
-        font-size: 12px;
+    }
+    .modelPanel {
+      display: flex;
+      .panel {
+        flex: 1;
+        border: 1px solid $ui-border;
+        border-right: none;
+        &:last-child {
+          border-right: 1px solid $ui-border;
+        }
+        .panelHeader {
+          display: flex;
+          align-items: center;
+          padding: 6px 12px;
+          font-weight: bold;
+          font-size: 16px;
+          height: 60px;
+          border-bottom: 1px solid $ui-border;
+        }
+        .panelBody {
+          padding: 12px;
+        }
+        .panelItem {
+          margin-bottom: 12px;
+        }
+        .sectionTitle {
+          font-size: 16px;
+          font-weight: bold;
+          margin: 20px 0 12px 0;
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+        .layerCard {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 120px;
+        }
+        .layerShape {
+          position: absolute;
+          bottom: 12px;
+          left: 12px;
+          font-size: 12px;
+        }
+        .deleteBtn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          color: $ui-red;
+        }
       }
-      .deleteBtn {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        color: $ui-red;
-      }
+    }
+    .selectLabel {
+      margin-bottom: 4px;
     }
   }
 }

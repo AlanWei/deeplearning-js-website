@@ -6,6 +6,7 @@ import pullAt from 'lodash/pullAt';
 import SiderLayout from '../../layouts/SiderLayout';
 import { LEARNING_RATES, EPOCHES, SPECIES, IRIS_DIMS, NORMALIZATION_FUNCS } from './const';
 import irisDataset from '../../dl/data/iris';
+import logistic from '../../dl/logistic';
 import './logistic.scss';
 
 const { Option } = Select;
@@ -65,20 +66,53 @@ class Logistic extends Component {
     });
   }
 
+  handleTrainingStart = () => {
+    const { costs } = logistic(
+      this.state.targetSpecies,
+      this.state.hiddenLayers,
+      this.state.learningRate,
+      this.state.epoch,
+      this.state.costFunc,
+    );
+    console.log(costs);
+  }
+
+  handleSelectChange = (value, type) => {
+    this.setState({
+      [type]: value,
+    });
+  }
+
+  renderControlPanel = () => (
+    <div className="controlPanel">
+      <div
+        className="startBtn"
+        role="presentation"
+        onClick={this.handleTrainingStart}
+      >
+        <Icon type="caret-right" />
+      </div>
+      <div>
+        <div className="selectLabel"><strong>Dataset</strong></div>
+        <Select defaultValue="iris" style={{ width: 200 }} disabled>
+          <Option value="iris">Iris</Option>
+        </Select>
+      </div>
+    </div>
+  )
+
   renderDataPanel = () => (
     <div className="panel">
       <div className="panelHeader">DATA</div>
       <div className="panelBody">
-        <div className="panelItem">
-          <div className="selectLabel">Dataset: </div>
-          <Select defaultValue="iris" style={{ width: 200 }} disabled>
-            <Option value="iris">Iris</Option>
-          </Select>
-        </div>
         <div className="sectionTitle">Hyperparameters</div>
         <div className="panelItem">
           <div className="selectLabel">Target Species</div>
-          <Select defaultValue={this.state.targetSpecies} style={{ width: 200 }}>
+          <Select
+            defaultValue={this.state.targetSpecies}
+            style={{ width: 200 }}
+            onChange={value => this.handleSelectChange(value, 'targetSpecies')}
+          >
             {map(SPECIES, item => (
               <Option value={item} key={item}>{item}</Option>
             ))}
@@ -86,7 +120,11 @@ class Logistic extends Component {
         </div>
         <div className="panelItem">
           <div className="selectLabel">Learning Rate</div>
-          <Select defaultValue={this.state.learningRate} style={{ width: 200 }}>
+          <Select
+            defaultValue={this.state.learningRate}
+            style={{ width: 200 }}
+            onChange={value => this.handleSelectChange(value, 'learningRate')}
+          >
             {map(LEARNING_RATES, item => (
               <Option value={item} key={item}>{item}</Option>
             ))}
@@ -94,7 +132,11 @@ class Logistic extends Component {
         </div>
         <div className="panelItem">
           <div className="selectLabel">Epoch</div>
-          <Select defaultValue={this.state.epoch} style={{ width: 200 }}>
+          <Select
+            defaultValue={this.state.epoch}
+            style={{ width: 200 }}
+            onChange={value => this.handleSelectChange(value, 'epoch')}
+          >
             {map(EPOCHES, item => (
               <Option value={item} key={item}>{item}</Option>
             ))}
@@ -211,8 +253,7 @@ class Logistic extends Component {
   renderResultPanel = () => (
     <div className="panel">
       <div className="panelHeader">RESULT</div>
-      <div className="panelBody">
-      </div>
+      <div className="panelBody" />
     </div>
   )
 
@@ -223,9 +264,12 @@ class Logistic extends Component {
         siderItems={SIDER_ITEMS}
         currentSiderItemKey="logistic"
       >
-        {this.renderDataPanel()}
-        {this.renderModelPanel()}
-        {this.renderResultPanel()}
+        {this.renderControlPanel()}
+        <div className="modelPanel">
+          {this.renderDataPanel()}
+          {this.renderModelPanel()}
+          {this.renderResultPanel()}
+        </div>
       </SiderLayout>
     );
   }
