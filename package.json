@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --inline --hot --progress --colors",
     "build": "npm run clean && cross-env NODE_ENV=production webpack -p --progress",
-    "clean": "rm -rf dl-js/",
+    "clean": "rm -rf deeplearning-js/",
     "lint": "eslint src",
     "test": "jest --coverage",
     "test:watch": "jest --watch --coverage"

@@ -1,5 +1,5 @@
 node_modules/
-dl-js/
+deeplearning-js/
 stats/
 coverage/
 npm-debug.log
